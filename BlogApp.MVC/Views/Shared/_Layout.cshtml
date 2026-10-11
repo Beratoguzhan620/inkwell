@@ -1,0 +1,17 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>@ViewData["Title"] - BlogApp</title>
+    <partial name="Partials/Layout/_Head" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <partial name="Partials/Layout/_Navbar" />
+
+    @RenderBody()
+
+    <partial name="Partials/Layout/_Footer" />
+    <partial name="Partials/Layout/_Scripts" />
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

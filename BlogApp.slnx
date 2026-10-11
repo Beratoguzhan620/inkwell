@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="BlogApp.Admin/BlogApp.Admin.csproj" />
+  <Project Path="BlogApp.Application/BlogApp.Application.csproj" />
+  <Project Path="BlogApp.Core/BlogApp.Core.csproj" />
+  <Project Path="BlogApp.Data/BlogApp.Data.csproj" />
+  <Project Path="BlogApp.MVC/BlogApp.MVC.csproj" />
+</Solution>

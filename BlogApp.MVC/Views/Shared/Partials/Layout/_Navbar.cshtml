@@ -1,0 +1,32 @@
+﻿@using System.Security.Claims
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" asp-action="Index" asp-controller="Home">Blog App</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            Menu
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto py-4 py-lg-0">
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item ">
+                        <a class="nav-link px-lg-3 py-3 py-lg-4">@(User.FindFirst("FullName")?.Value ?? "Kullanıcı")</a>
+                       </li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-action="Create" asp-controller="BlogPost">Blog Yaz</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-action="Logout" asp-controller="Auth">Çıkış Yap</a></li>
+
+
+                }
+                else
+                {
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-action="Login" asp-controller="Auth">Giriş Yap</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-action="Register" asp-controller="Auth">Kaydol</a></li>
+                }
+
+            </ul>
+        </div>
+    </div>
+</nav>

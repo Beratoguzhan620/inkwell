@@ -1,0 +1,35 @@
+﻿@using BlogApp.Application.DTOs.Blog
+@model BlogPostDto
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+
+<!-- Page Header-->
+<header class="masthead">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="post-heading">
+                    <h1>@Model.Title</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by
+                        <a href="#!">@Model.AuthorFullName</a>
+                        on @Model.CreatedAt.ToString("MMMM dd, yyyy")
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- Post Content-->
+<article class="mb-4">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                @Html.Raw(Model.Content)
+            </div>
+        </div>
+    </div>
+</article>

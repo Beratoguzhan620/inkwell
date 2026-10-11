@@ -1,0 +1,50 @@
+﻿@model VerificationRequest
+
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
+    <div class="card shadow-sm w-100" style="max-width:420px;">
+        <div class="card-body">
+            <h5 class="card-title text-center mb-3">Hesap Doğrulama</h5>
+            <p class="text-center text-muted small">E-posta adresinize gönderilen 6 haneli kodu girin.</p>
+
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show small py-2" role="alert">
+                    <i class="fas fa-circle-exclamation me-2"></i>@ViewBag.ErrorMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (ViewBag.SuccessMessage != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show small py-2" role="alert">
+                    <i class="fas fa-circle-check me-2"></i>@ViewBag.SuccessMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <a asp-action="Index" asp-controller="Home" class="btn btn-link btn-sm">Ana Sayfaya Dön</a>
+            }
+
+            <form asp-action="Verify" asp-controller="Auth" method="post" class="mt-4">
+                @Html.AntiForgeryToken()
+
+
+                <input type="hidden" asp-for="UserId" value="@ViewBag.UserId" />
+
+                <div class="mb-3">
+                    <label asp-for="Code" class="form-label">Doğrulama Kodu</label>
+                    <input asp-for="Code" type="text" maxlength="6" autocomplete="one-time-code" class="form-control form-control-lg text-center fs-4" placeholder="123456" />
+                    <span asp-validation-for="Code" class="text-danger small"></span>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">Doğrula</button>
+                    <a class="btn btn-link btn-sm" href="#">Kodu tekrar gönder</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
