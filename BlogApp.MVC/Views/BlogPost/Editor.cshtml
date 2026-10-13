@@ -20,7 +20,7 @@
     <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
     <form method="post" enctype="multipart/form-data" novalidate
-          action="@(isEdit ? Url.Action("Edit", new { id = Model.Id }) : Url.Action("Create"))">
+          asp-controller="BlogPost" asp-action="@(isEdit ? "Edit" : "Create")" asp-route-id="@Model.Id">
         <label class="visually-hidden" asp-for="Title"></label>
         <input class="editor-title" asp-for="Title" placeholder="Başlık" autocomplete="off" />
         <span asp-validation-for="Title"></span>

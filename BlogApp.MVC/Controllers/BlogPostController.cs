@@ -54,7 +54,7 @@ public class BlogPostController(
 
     [Authorize]
     [HttpPost("/write")]
-    public async Task<IActionResult> Create(PostEditorViewModel model, string intent)
+    public async Task<IActionResult> Create(PostEditorViewModel model, string? intent)
     {
         var coverError = CoverImageStorage.Validate(model.Cover);
         if (coverError is not null)
@@ -108,7 +108,7 @@ public class BlogPostController(
 
     [Authorize]
     [HttpPost("/posts/{id:int}/edit")]
-    public async Task<IActionResult> Edit(int id, PostEditorViewModel model, string intent)
+    public async Task<IActionResult> Edit(int id, PostEditorViewModel model, string? intent)
     {
         model.Id = id;
 
@@ -151,9 +151,9 @@ public class BlogPostController(
 
     [Authorize]
     [HttpPost("/posts/{id:int}/comments")]
-    public async Task<IActionResult> AddComment(int id, string content)
+    public async Task<IActionResult> AddComment(int id, string? content)
     {
-        var result = await commentService.AddAsync(id, CurrentUserId!.Value, content);
+        var result = await commentService.AddAsync(id, CurrentUserId!.Value, content ?? string.Empty);
         return await BackToCommentsAsync(id, result.Success ? null : result.Message);
     }
 
