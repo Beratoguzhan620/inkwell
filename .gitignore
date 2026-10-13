@@ -26,9 +26,7 @@ secrets.json
 *.db-shm
 *.db-wal
 
-# Local tooling
-.claude/
-CLAUDE.md
+# Local notes
 docs/brief/
 
 # OS
