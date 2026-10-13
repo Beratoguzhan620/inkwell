@@ -17,5 +17,5 @@ public class VerificationCode
 public enum VerificationType
 {
     EmailVerification,
-    PasswordReset, //TODO: implement this
+    PasswordReset,
 }

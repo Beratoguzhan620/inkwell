@@ -12,6 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<User> Users { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<VerificationCode> VerificationCodes { get; set; }
+    public DbSet<Comment> Comments { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
