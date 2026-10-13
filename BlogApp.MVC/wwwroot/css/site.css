@@ -344,6 +344,7 @@ main.site-main {
     padding: .15em .35em;
     border-radius: 4px;
     background: var(--iw-surface-2);
+    color: var(--iw-text);
 }
 
 .prose pre {
