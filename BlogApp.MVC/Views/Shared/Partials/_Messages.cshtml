@@ -1,0 +1,17 @@
+@{
+    var success = ViewBag.SuccessMessage as string ?? TempData["SuccessMessage"] as string;
+    var error = ViewBag.ErrorMessage as string ?? TempData["ErrorMessage"] as string;
+    var info = ViewBag.InfoMessage as string ?? TempData["InfoMessage"] as string;
+}
+@if (!string.IsNullOrWhiteSpace(success))
+{
+    <div class="alert alert-success" role="status"><i class="bi bi-check-circle"></i><span>@success</span></div>
+}
+@if (!string.IsNullOrWhiteSpace(info))
+{
+    <div class="alert alert-info-soft" role="status"><i class="bi bi-info-circle"></i><span>@info</span></div>
+}
+@if (!string.IsNullOrWhiteSpace(error))
+{
+    <div class="alert alert-danger" role="alert"><i class="bi bi-exclamation-circle"></i><span>@error</span></div>
+}

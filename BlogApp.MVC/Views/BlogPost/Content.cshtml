@@ -1,35 +1,17 @@
-﻿@using BlogApp.Application.DTOs.Blog
+@using BlogApp.Application.DTOs.Blog
 @model BlogPostDto
 @{
-    ViewData["Title"] = "Ana Sayfa";
+    ViewData["Title"] = Model.Title;
 }
 
+<article class="container-reading">
+    <header class="article-header">
+        <a class="category-label" asp-controller="Home" asp-action="Index">@Model.CategoryName</a>
+        <h1>@Model.Title</h1>
+        <div class="post-meta">
+            <span>@Model.AuthorFullName</span><span class="dot"></span><time datetime="@Model.CreatedAt.ToString("yyyy-MM-dd")">@Model.CreatedAt.ToString("d MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))</time>
+        </div>
+    </header>
 
-<!-- Page Header-->
-<header class="masthead">
-    <div class="container position-relative px-4 px-lg-5">
-        <div class="row gx-4 gx-lg-5 justify-content-center">
-            <div class="col-md-10 col-lg-8 col-xl-7">
-                <div class="post-heading">
-                    <h1>@Model.Title</h1>
-                    <h2 class="subheading"></h2>
-                    <span class="meta">
-                        Posted by
-                        <a href="#!">@Model.AuthorFullName</a>
-                        on @Model.CreatedAt.ToString("MMMM dd, yyyy")
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-</header>
-<!-- Post Content-->
-<article class="mb-4">
-    <div class="container px-4 px-lg-5">
-        <div class="row gx-4 gx-lg-5 justify-content-center">
-            <div class="col-md-10 col-lg-8 col-xl-7">
-                @Html.Raw(Model.Content)
-            </div>
-        </div>
-    </div>
+    <div class="prose" style="white-space: pre-line">@Model.Content</div>
 </article>

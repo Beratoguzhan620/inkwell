@@ -1,14 +1,16 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="tr">
 <head>
-    <title>@ViewData["Title"] - BlogApp</title>
     <partial name="Partials/Layout/_Head" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
+    <a class="visually-hidden-focusable btn btn-primary position-absolute m-2" href="#main">İçeriğe geç</a>
     <partial name="Partials/Layout/_Navbar" />
 
-    @RenderBody()
+    <main class="site-main" id="main">
+        @RenderBody()
+    </main>
 
     <partial name="Partials/Layout/_Footer" />
     <partial name="Partials/Layout/_Scripts" />

@@ -1,18 +1,12 @@
-﻿<div class="container d-flex align-items-center justify-content-center min-vh-100">
-    <div class="card shadow-sm w-100" style="max-width:420px;">
-        <div class="card-body">
-            <h5 class="card-title text-center mb-3">Hesap Doğrulama</h5>
-          
-                <div class="alert alert-success alert-dismissible fade show large py-2" role="alert">
-                    <i class="fas fa-circle-check me-2"></i>E-posta Onaylama Başarılı
-                </div>
+@{
+    ViewData["Title"] = "Hesap doğrulandı";
+}
 
-                <a asp-action="Login" asp-controller="Auth" class="btn btn-outline-dark btn-sm">Giriş Yap</a>
-          
-        </div>
+<div class="container-reading">
+    <div class="auth-panel text-center">
+        <div class="empty-state-icon mb-3" style="background: var(--iw-success-soft); color: var(--iw-success)"><i class="bi bi-check-lg"></i></div>
+        <h1>Hesabınız doğrulandı</h1>
+        <p class="lead-text">Artık giriş yapıp ilk yazınızı yayınlayabilirsiniz.</p>
+        <a class="btn btn-primary" asp-controller="Auth" asp-action="Login">Giriş yap</a>
     </div>
 </div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

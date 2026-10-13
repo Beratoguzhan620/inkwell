@@ -1,32 +1,46 @@
-﻿@using System.Security.Claims
-<!-- Navigation-->
-<nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
-    <div class="container px-4 px-lg-5">
-        <a class="navbar-brand" asp-action="Index" asp-controller="Home">Blog App</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            Menu
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ms-auto py-4 py-lg-0">
+@using System.Security.Claims
+@{
+    var controller = ViewContext.RouteData.Values["controller"] as string;
+    var action = ViewContext.RouteData.Values["action"] as string;
+    string? Active(string c, string? a = null) =>
+        string.Equals(controller, c, StringComparison.OrdinalIgnoreCase)
+        && (a is null || string.Equals(action, a, StringComparison.OrdinalIgnoreCase)) ? "active" : null;
 
-                @if (User.Identity.IsAuthenticated)
+    var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+    var fullName = User.FindFirstValue("FullName") ?? User.FindFirstValue(ClaimTypes.Name) ?? "";
+    var initials = string.Concat(fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => char.ToUpper(p[0])));
+}
+<header class="site-header">
+    <div class="container-wide">
+        <div class="site-header-row">
+            <a class="brand" asp-controller="Home" asp-action="Index"><span class="brand-mark">i</span>Inkwell</a>
+
+            <nav class="site-nav" aria-label="Ana menü">
+                <a class="@Active("Home")" asp-controller="Home" asp-action="Index">Yazılar</a>
+            </nav>
+
+            <div class="header-actions">
+                @if (isAuthenticated)
                 {
-                    <li class="nav-item ">
-                        <a class="nav-link px-lg-3 py-3 py-lg-4">@(User.FindFirst("FullName")?.Value ?? "Kullanıcı")</a>
-                       </li>
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-action="Create" asp-controller="BlogPost">Blog Yaz</a></li>
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-action="Logout" asp-controller="Auth">Çıkış Yap</a></li>
-
-
+                    <a class="btn btn-primary btn-sm btn-write" asp-controller="BlogPost" asp-action="Create"><i class="bi bi-pencil"></i><span>Yaz</span></a>
+                    <div class="dropdown">
+                        <button class="user-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Hesap menüsü">
+                            <span class="avatar">@initials</span><span class="user-name">@fullName</span><i class="bi bi-chevron-down small"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" asp-controller="Auth" asp-action="Logout"><i class="bi bi-box-arrow-right me-2"></i>Çıkış yap</a></li>
+                        </ul>
+                    </div>
                 }
                 else
                 {
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-action="Login" asp-controller="Auth">Giriş Yap</a></li>
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-action="Register" asp-controller="Auth">Kaydol</a></li>
+                    <a class="btn btn-ghost btn-sm" asp-controller="Auth" asp-action="Login">Giriş yap</a>
+                    <a class="btn btn-primary btn-sm" asp-controller="Auth" asp-action="Register">Kayıt ol</a>
                 }
-
-            </ul>
+            </div>
         </div>
+        <nav class="mobile-nav" aria-label="Ana menü">
+            <a class="@Active("Home")" asp-controller="Home" asp-action="Index">Yazılar</a>
+        </nav>
     </div>
-</nav>
+</header>
