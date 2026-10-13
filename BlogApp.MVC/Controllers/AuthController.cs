@@ -4,11 +4,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Security.Principal;
 
 namespace BlogApp.MVC.Controllers;
 
-public class AuthController(IAuthService authService) : Controller
+public class AuthController(IAuthService authService, IWebHostEnvironment environment) : Controller
 {
     [HttpGet("Register")]
     public IActionResult Register()
@@ -31,7 +30,13 @@ public class AuthController(IAuthService authService) : Controller
             return View(model);
         }
 
-        return RedirectToAction(nameof(Verify), new { userId = result.Data.UserId });
+        var registration = result.Data!;
+        if (!registration.VerificationEmailSent && environment.IsDevelopment())
+            TempData["DevelopmentCode"] = registration.VerificationCode;
+        else
+            TempData["InfoMessage"] = $"{registration.Email} adresine doğrulama kodu gönderildi.";
+
+        return RedirectToAction(nameof(Verify), new { userId = registration.UserId });
     }
 
 
@@ -45,6 +50,8 @@ public class AuthController(IAuthService authService) : Controller
     [HttpPost("Login")]
     public async Task<IActionResult> Login(LoginRequest model, string? returnUrl = null)
     {
+        ViewBag.ReturnUrl = returnUrl;
+
         if (!ModelState.IsValid)
             return View(model);
 
@@ -61,7 +68,7 @@ public class AuthController(IAuthService authService) : Controller
 
 
         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-            return Redirect(returnUrl);
+            return LocalRedirect(returnUrl);
 
        
         return RedirectToAction("Index", "Home");
@@ -71,8 +78,7 @@ public class AuthController(IAuthService authService) : Controller
     [HttpGet("Verify")]
     public IActionResult Verify(int userId)
     {
-        ViewBag.UserId = userId;
-        return View();
+        return View(new VerificationRequest { UserId = userId });
     }
 
     [HttpPost("Verify")]
@@ -96,9 +102,6 @@ public class AuthController(IAuthService authService) : Controller
             return View(model);
         }
 
-        ViewBag.SuccessMessage = result.Message;
-
-
         return RedirectToAction(nameof(VerificationSuccessful));
     }
 
@@ -115,6 +118,7 @@ public class AuthController(IAuthService authService) : Controller
 
         if (!result.Success)
         {
+            TempData["ErrorMessage"] = result.Message;
             return RedirectToAction(nameof(Verify), new { userId });
         }
 
@@ -122,6 +126,7 @@ public class AuthController(IAuthService authService) : Controller
 
     }
 
+    [HttpGet("Verify/Done")]
     public IActionResult VerificationSuccessful()
     {
         return View();

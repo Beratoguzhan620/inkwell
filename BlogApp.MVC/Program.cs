@@ -11,7 +11,6 @@ builder.Services.AddMVCServices();
 builder.Services.AddDataServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
-//IOptions pattern ile configuration'daki ayarları ilgili class'a bağlıyorum
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
 var app = builder.Build();
@@ -22,12 +21,16 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-//Seed database
-using var scope = app.Services.CreateScope();
-var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-//await dbContext.Database.MigrateAsync(); //update-database ile yapmak yerine bu satırı açarsak otomatik olarak her çalışmada migraiton'lar db'ye uygulanır
-await DbSeeder.SeedAsync(dbContext);
+// Apply pending migrations and seed lookup data on start-up, so a fresh database works
+// without running `dotnet ef database update` by hand.
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await dbContext.Database.MigrateAsync();
+    await DbSeeder.SeedAsync(dbContext);
+}
 
+app.UseStatusCodePagesWithReExecute("/not-found");
 app.UseHttpsRedirection();
 app.UseRouting();
 
@@ -42,4 +45,4 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 
-app.Run();
+await app.RunAsync();

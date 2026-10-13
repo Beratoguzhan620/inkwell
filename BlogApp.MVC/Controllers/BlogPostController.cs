@@ -36,10 +36,11 @@ public class BlogPostController(IBlogPostService blogPostService, ICategoryServi
     [HttpPost]
     public async Task<IActionResult> CreateAsync(BlogPostCreateViewModel model)
     {
-        //TODO: blogPostService.CreateBlogPost() metodu tetiklensin, authorId user'in claimlerinden gelsin 
-
         if (!ModelState.IsValid)
+        {
+            await FillCategorySelectAsync();
             return View(model);
+        }
 
 
         var request = new CreateBlogPostRequest
@@ -52,18 +53,19 @@ public class BlogPostController(IBlogPostService blogPostService, ICategoryServi
 
         var result = await blogPostService.CreateBlogPostAsync(request);
 
-        if(!result.Success)
+        if (!result.Success)
         {
             ViewBag.ErrorMessage = result.Message;
-            await FillCategorySelectAsync(); //Hata durumunda select alanının tekrar doldurulması gerekiyor
+            await FillCategorySelectAsync();
+            return View(model);
         }
 
+        TempData["SuccessMessage"] = "Yazınız onaya gönderildi.";
         return RedirectToAction(nameof(Create));
     }
 
     private async Task FillCategorySelectAsync()
     {
-        //TODO: db'den gelen kategoriler ekrandaki drowdownu doldursun
         var categoriesResult = await categoryService.GetAllCategoriesAsync();
 
         if (categoriesResult.Success)
