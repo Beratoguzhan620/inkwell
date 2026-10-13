@@ -19,6 +19,9 @@ public class SmtpMailService : IMailService
     public async Task<Result> SendEmailAsync(string to, string subject, string body)
     {
 
+        if (string.IsNullOrWhiteSpace(emailSettings.Server) || string.IsNullOrWhiteSpace(emailSettings.Username))
+            return Result.Fail("E-posta ayarları yapılandırılmamış.");
+
         try
         {
             var smtpClient = new SmtpClient(emailSettings.Server, emailSettings.Port)

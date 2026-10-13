@@ -9,10 +9,21 @@ public class HomeController(IBlogPostService blogPostService) : Controller
 {
     public async Task<IActionResult> IndexAsync()
     {
-        var result  = await blogPostService.GetAllBlogPosts();
-        
-        var posts = result.Data;
+        var result = await blogPostService.GetAllBlogPosts();
 
-        return View(posts);
+        return View(result.Data ?? []);
+    }
+
+    [HttpGet("/not-found")]
+    public IActionResult PageNotFound()
+    {
+        Response.StatusCode = StatusCodes.Status404NotFound;
+        return View("NotFound");
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

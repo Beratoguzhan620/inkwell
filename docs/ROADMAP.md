@@ -9,9 +9,9 @@ E-posta doğrulamalı üyelik, kategori ve yazar paneli olan çok katmanlı blog
 Her aşama ayrı bir branch ve PR olarak yapılır (`stage/<no>-<kisa-ad>`). Bir aşama ancak tüm maddeleri bitince, build/testler geçince ve ekran görüntüleri eklenince tamamlanmış sayılır. Biten maddeler `[x]` yapılır.
 
 ## Aşama 1 — Güvenlik ve temizlik
-- [ ] `appsettings.Development.json` içindeki SMTP şifresi kaldırılır → user-secrets; `appsettings.Development.example.json` eklenir
-- [ ] Proje adı/marka "Inkwell"; tasarım token'ları (`docs/DESIGN.md`) ile ortak CSS
-- [ ] Yeni layout: okuma odaklı, geniş satır aralığı, serif başlık (Source Serif) + Plex Sans gövde
+- [x] `appsettings.Development.json` içindeki SMTP şifresi kaldırılır → user-secrets; `appsettings.Development.example.json` eklenir
+- [x] Proje adı/marka "Inkwell"; tasarım token'ları (`docs/DESIGN.md`) ile ortak CSS
+- [x] Yeni layout: okuma odaklı, geniş satır aralığı, serif başlık (Source Serif) + Plex Sans gövde
 
 ## Aşama 2 — Yazı akışının tamamlanması
 - [ ] Yazı oluşturma: `CreateBlogPost` bağlanır, `authorId` claim'den gelir; kategori dropdown'u DB'den dolar

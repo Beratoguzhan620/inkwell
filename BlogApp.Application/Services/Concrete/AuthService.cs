@@ -87,8 +87,7 @@ public class AuthService(AppDbContext context, IMailService mailService, IConfig
         await context.SaveChangesAsync();
 
 
-        //TODO: kullanıcıyla onay kodunu/linkini e-posta ile gönder
-        await SendVerificationEmailAsync(user.Id, verificationCode.Code, user.Email);
+        var emailResult = await SendVerificationEmailAsync(user.Id, verificationCode.Code, user.Email);
 
 
         var response = new RegisterResponse
@@ -96,7 +95,9 @@ public class AuthService(AppDbContext context, IMailService mailService, IConfig
             UserId = user.Id,
             Email = user.Email,
             IsActive = user.IsActive,
-            IsEmailVerified = user.IsEmailVerified
+            IsEmailVerified = user.IsEmailVerified,
+            VerificationEmailSent = emailResult.Success,
+            VerificationCode = verificationCode.Code,
         };
 
         return Result<RegisterResponse>.Ok(response);
@@ -126,10 +127,10 @@ public class AuthService(AppDbContext context, IMailService mailService, IConfig
     private async Task<Result> SendVerificationEmailAsync(int userId, string code, string email)
     {
         var domain = configuration["AppUrl"];
-        var subject = "BlogApp hesap doğrulama";
+        var subject = "Inkwell hesap doğrulama";
         var body = $"""
 
-            <h1>BlogApp Hesap Doğrulama</h1>
+            <h1>Inkwell hesap doğrulama</h1>
             <p>Hesabınızı doğrulamak için aşağıdaki linke tıklayınız:</p>
             <a href="{domain}/verify/link?userId={userId}&code={code}">Hesabımı Doğrula</a>
 

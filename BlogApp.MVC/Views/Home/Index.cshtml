@@ -1,63 +1,39 @@
-﻿@using BlogApp.Application.DTOs.Blog
-
+@using BlogApp.Application.DTOs.Blog
 @model List<BlogPostDto>
 @{
-    ViewData["Title"] = "Ana Sayfa";
+    ViewData["Title"] = "Yazılar";
 }
 
+<div class="container-reading">
+    <section class="intro">
+        <h1>Okumaya değer yazılar, sade bir sayfada.</h1>
+        <p>Inkwell'de yazarlar teknoloji, yazılım ve bilim üzerine yazıyor. Reklam yok, dikkat dağıtan hiçbir şey yok.</p>
+    </section>
 
-@functions {
-    string getContentPreview(string content)
+    @if (Model is null || Model.Count == 0)
     {
-        if (content.Length <= 30)
-            return content;
-
-        return $"{content.Substring(0, 30)}...";
-    }
-}
-
-
-<!-- Page Header-->
-<header class="masthead" style="background-image: url('/theme/assets/img/home-bg.jpg')">
-    <div class="container position-relative px-4 px-lg-5">
-        <div class="row gx-4 gx-lg-5 justify-content-center">
-            <div class="col-md-10 col-lg-8 col-xl-7">
-                <div class="site-heading">
-                    <h1>Clean Blog</h1>
-                    <span class="subheading">A Blog Theme by Start Bootstrap</span>
-                </div>
-            </div>
+        <div class="empty-state">
+            <div class="empty-state-icon"><i class="bi bi-journal-text"></i></div>
+            <h2>Henüz yayınlanmış yazı yok</h2>
+            <p>İlk yazıyı siz yazın; onaylandığında burada görünecek.</p>
+            <a class="btn btn-primary" asp-controller="BlogPost" asp-action="Create">Yazı yaz</a>
         </div>
-    </div>
-</header>
-
-
-<!-- Main Content-->
-<div class="container px-4 px-lg-5">
-    <div class="row gx-4 gx-lg-5 justify-content-center">
-        <div class="col-md-10 col-lg-8 col-xl-7">
-
+    }
+    else
+    {
+        <ol class="post-list">
             @foreach (var post in Model)
             {
-                <!-- Post preview-->
-                <div class="post-preview">
-                    <a asp-action="Content" asp-route-id="@post.Id" asp-controller="BlogPost">
-                        <h2 class="post-title">@post.Title</h2>
-                    </a>
-                    <p class="post-meta">
-                        Posted by
-                        <a href="#!">@post.AuthorFullName</a>
-                        on @post.CreatedAt.ToString("MMMM dd, yyyy")
-                    </p>
-                </div>
-                <!-- Divider-->
-                <hr class="my-4" />
+                <li class="post-item">
+                    <div>
+                        <span class="category-label">@post.CategoryName</span>
+                        <h2><a asp-controller="BlogPost" asp-action="Content" asp-route-id="@post.Id">@post.Title</a></h2>
+                        <div class="post-meta">
+                            <span>@post.AuthorFullName</span><span class="dot"></span><time datetime="@post.CreatedAt.ToString("yyyy-MM-dd")">@post.CreatedAt.ToString("d MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))</time>
+                        </div>
+                    </div>
+                </li>
             }
-
-       
-          
-            <!-- Pager-->
-            <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a></div>
-        </div>
-    </div>
+        </ol>
+    }
 </div>

@@ -1,50 +1,33 @@
-﻿@model VerificationRequest
+@model VerificationRequest
+@{
+    ViewData["Title"] = "E-posta doğrulama";
+    var userId = Model?.UserId > 0 ? Model.UserId : ViewBag.UserId as int? ?? 0;
+}
 
-<div class="container d-flex align-items-center justify-content-center min-vh-100">
-    <div class="card shadow-sm w-100" style="max-width:420px;">
-        <div class="card-body">
-            <h5 class="card-title text-center mb-3">Hesap Doğrulama</h5>
-            <p class="text-center text-muted small">E-posta adresinize gönderilen 6 haneli kodu girin.</p>
+<div class="container-reading">
+    <div class="auth-panel">
+        <h1>E-postanızı doğrulayın</h1>
+        <p class="lead-text">Kayıt olduğunuz adrese 6 karakterlik bir kod gönderdik. Kodu girin ya da e-postadaki bağlantıya tıklayın.</p>
 
-            @if (ViewBag.ErrorMessage != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show small py-2" role="alert">
-                    <i class="fas fa-circle-exclamation me-2"></i>@ViewBag.ErrorMessage
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
+        <partial name="Partials/_Messages" />
 
-            @if (ViewBag.SuccessMessage != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show small py-2" role="alert">
-                    <i class="fas fa-circle-check me-2"></i>@ViewBag.SuccessMessage
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+        @if (TempData["DevelopmentCode"] is string devCode)
+        {
+            <div class="alert alert-info-soft" role="status">
+                <i class="bi bi-wrench"></i>
+                <span>Geliştirme modu: e-posta gönderilemedi. Kodunuz <strong class="font-mono">@devCode</strong></span>
+            </div>
+        }
 
-                <a asp-action="Index" asp-controller="Home" class="btn btn-link btn-sm">Ana Sayfaya Dön</a>
-            }
+        <form asp-controller="Auth" asp-action="Verify" method="post" novalidate>
+            <input type="hidden" name="UserId" value="@userId" />
+            <div class="mb-4">
+                <label class="form-label" for="Code">Doğrulama kodu</label>
+                <input class="form-control code-input" id="Code" name="Code" maxlength="6" autocomplete="one-time-code" placeholder="······" autofocus required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Doğrula</button>
+        </form>
 
-            <form asp-action="Verify" asp-controller="Auth" method="post" class="mt-4">
-                @Html.AntiForgeryToken()
-
-
-                <input type="hidden" asp-for="UserId" value="@ViewBag.UserId" />
-
-                <div class="mb-3">
-                    <label asp-for="Code" class="form-label">Doğrulama Kodu</label>
-                    <input asp-for="Code" type="text" maxlength="6" autocomplete="one-time-code" class="form-control form-control-lg text-center fs-4" placeholder="123456" />
-                    <span asp-validation-for="Code" class="text-danger small"></span>
-                </div>
-
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary btn-lg">Doğrula</button>
-                    <a class="btn btn-link btn-sm" href="#">Kodu tekrar gönder</a>
-                </div>
-            </form>
-        </div>
+        <p class="auth-switch"><a asp-controller="Auth" asp-action="Login">Giriş sayfasına dön</a></p>
     </div>
 </div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
