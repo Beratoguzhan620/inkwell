@@ -1,0 +1,96 @@
+@model PostEditorViewModel
+@{
+    var isEdit = Model.Id is not null;
+    ViewData["Title"] = isEdit ? "Yazıyı düzenle" : "Yeni yazı";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.css" />
+}
+
+<div class="container-reading">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Mine">Yazılarım</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@(isEdit ? "Düzenle" : "Yeni yazı")</li>
+        </ol>
+    </nav>
+
+    <partial name="Partials/_Messages" />
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+    <form method="post" enctype="multipart/form-data" novalidate
+          asp-controller="BlogPost" asp-action="@(isEdit ? "Edit" : "Create")" asp-route-id="@Model.Id">
+        <label class="visually-hidden" asp-for="Title"></label>
+        <input class="editor-title" asp-for="Title" placeholder="Başlık" autocomplete="off" />
+        <span asp-validation-for="Title"></span>
+
+        <div class="row g-3 my-2">
+            <div class="col-sm-6">
+                <label class="form-label" asp-for="CategoryId"></label>
+                <select class="form-select" asp-for="CategoryId" asp-items="ViewBag.CategorySelectList">
+                    <option value="">Kategori seçin</option>
+                </select>
+                <span asp-validation-for="CategoryId"></span>
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label" asp-for="Cover"></label>
+                <input class="form-control" asp-for="Cover" type="file" accept="image/png, image/jpeg, image/webp" />
+                <div class="form-text">JPG, PNG veya WEBP, en fazla 5 MB.</div>
+                <span asp-validation-for="Cover"></span>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.CurrentCoverUrl))
+        {
+            <div class="mb-3">
+                <div class="cover-preview"><img src="@Model.CurrentCoverUrl" alt="Mevcut kapak görseli" /></div>
+                <div class="form-check">
+                    <input class="form-check-input" asp-for="RemoveCover" />
+                    <label class="form-check-label" asp-for="RemoveCover"></label>
+                </div>
+            </div>
+        }
+
+        <div class="mt-3">
+            <label class="form-label" asp-for="Content"></label>
+            <textarea asp-for="Content" id="content" rows="18" class="form-control"></textarea>
+            <div class="form-text">Markdown desteklenir: **kalın**, _italik_, ## başlık, - liste, [bağlantı](https://…), ```kod```.</div>
+            <span asp-validation-for="Content"></span>
+        </div>
+
+        <div class="editor-actions">
+            @if (isEdit && Model.IsPublished)
+            {
+                <button class="btn btn-ghost" type="submit" name="intent" value="draft">Yayından kaldır</button>
+                <button class="btn btn-primary" type="submit" name="intent" value="publish">Değişiklikleri yayınla</button>
+            }
+            else
+            {
+                <button class="btn btn-outline-secondary" type="submit" name="intent" value="draft">Taslak olarak kaydet</button>
+                <button class="btn btn-primary" type="submit" name="intent" value="publish">Yayınla</button>
+            }
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.js"></script>
+    <script>
+        (function () {
+            if (typeof EasyMDE === "undefined") return; // CDN unavailable: the plain textarea still works.
+            var editor = new EasyMDE({
+                element: document.getElementById("content"),
+                spellChecker: false,
+                status: ["words"],
+                minHeight: "360px",
+                placeholder: "Yazmaya başlayın…",
+                toolbar: ["bold", "italic", "heading-2", "heading-3", "|", "quote", "unordered-list", "ordered-list", "|", "link", "code", "|", "preview", "side-by-side", "fullscreen", "|", "guide"],
+                toolbarTips: true,
+            });
+            // Keep the hidden textarea in sync for validation and submit.
+            editor.codemirror.on("change", function () { document.getElementById("content").value = editor.value(); });
+        })();
+    </script>
+}

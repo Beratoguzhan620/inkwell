@@ -14,11 +14,11 @@ Her aşama ayrı bir branch ve PR olarak yapılır (`stage/<no>-<kisa-ad>`). Bir
 - [x] Yeni layout: okuma odaklı, geniş satır aralığı, serif başlık (Source Serif) + Plex Sans gövde
 
 ## Aşama 2 — Yazı akışının tamamlanması
-- [ ] Yazı oluşturma: `CreateBlogPost` bağlanır, `authorId` claim'den gelir; kategori dropdown'u DB'den dolar
-- [ ] Markdown editörü (EasyMDE vb.) + kapak görseli yükleme
-- [ ] Yazı listesi (sayfalama, kategori filtresi, arama), yazı detayı (okuma süresi, yazar kartı)
-- [ ] Yorumlar (giriş yapmış kullanıcı), taslak/yayınla durumu, slug'lı URL
-- [ ] Generic Repository TODO'su: ya uygulanır ya da gerekçesiyle kapatılır
+- [x] Yazı oluşturma: `CreateBlogPost` bağlanır, `authorId` claim'den gelir; kategori dropdown'u DB'den dolar
+- [x] Markdown editörü (EasyMDE vb.) + kapak görseli yükleme
+- [x] Yazı listesi (sayfalama, kategori filtresi, arama), yazı detayı (okuma süresi, yazar kartı)
+- [x] Yorumlar (giriş yapmış kullanıcı), taslak/yayınla durumu, slug'lı URL
+- [x] Generic Repository TODO'su: ya uygulanır ya da gerekçesiyle kapatılır
 
 ## Aşama 3 — Admin paneli ve hesap akışları
 - [ ] `BlogApp.Admin`: dashboard, yazılar, kategoriler, kullanıcılar, yorum moderasyonu
@@ -30,3 +30,4 @@ Her aşama ayrı bir branch ve PR olarak yapılır (`stage/<no>-<kisa-ad>`). Bir
 - [ ] Test projesi (AuthService, BlogPostService) + GitHub Actions
 - [ ] Seed: 3 yazar, 20 yazı, kategoriler, yorumlar
 - [ ] Canlı demo + demo hesapları; ekran görüntüleri; README (TR + EN)
+- [ ] README'de "Proje geçmişi / Background" bölümü — TR: "Bu proje bir bootcamp projesi olarak başladı, sonra baştan geliştirildi." EN: "This project started as a bootcamp project and was later rebuilt from the ground up." Altına neyin yeniden yapıldığı kısaca maddelenir (tasarım, özellikler, testler, CI).

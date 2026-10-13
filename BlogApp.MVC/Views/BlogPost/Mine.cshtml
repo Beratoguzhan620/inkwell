@@ -1,0 +1,101 @@
+@model List<BlogPostDto>
+@{
+    ViewData["Title"] = "Yazılarım";
+}
+
+<div class="container-reading">
+    <div class="page-header">
+        <div>
+            <h1>Yazılarım</h1>
+            <p>Taslaklarınız ve yayındaki yazılarınız.</p>
+        </div>
+        <div class="page-header-actions">
+            <a class="btn btn-primary" asp-action="Create"><i class="bi bi-pencil"></i>Yeni yazı</a>
+        </div>
+    </div>
+
+    <partial name="Partials/_Messages" />
+
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon"><i class="bi bi-journal-plus"></i></div>
+            <h2>Henüz yazınız yok</h2>
+            <p>İlk yazınızı taslak olarak başlatın; hazır olduğunda yayınlayın.</p>
+            <a class="btn btn-primary" asp-action="Create">Yazmaya başla</a>
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Başlık</th>
+                            <th>Durum</th>
+                            <th class="num">Yorum</th>
+                            <th><span class="visually-hidden">İşlemler</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var post in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <a class="fw-medium text-body text-decoration-none" asp-action="Detail" asp-route-slug="@post.Slug">@post.Title</a>
+                                    <div class="text-muted small">@post.CategoryName · @Format.Date(post.UpdatedAt ?? post.CreatedAt)</div>
+                                </td>
+                                <td>
+                                    @if (post.Status == BlogPostStatus.Approved)
+                                    {
+                                        <span class="badge badge-success">Yayında</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-neutral">Taslak</span>
+                                    }
+                                </td>
+                                <td class="num">@post.CommentCount</td>
+                                <td class="text-end text-nowrap">
+                                    <a class="btn btn-outline-secondary btn-sm" asp-action="Edit" asp-route-id="@post.Id">Düzenle</a>
+                                    <button class="btn btn-ghost btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deletePost"
+                                            data-post-title="@post.Title" data-delete-url="@Url.Action("Delete", new { id = post.Id })">Sil</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="deletePost" tabindex="-1" aria-labelledby="deletePostTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content" method="post" asp-action="Delete" asp-route-id="0">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="deletePostTitle">Yazıyı sil</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0"><strong data-post-label></strong> ve tüm yorumları kalıcı olarak silinecek.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                <button type="submit" class="btn btn-danger">Sil</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var modal = document.getElementById("deletePost");
+        modal.addEventListener("show.bs.modal", function (event) {
+            var trigger = event.relatedTarget;
+            modal.querySelector("form").action = trigger.dataset.deleteUrl;
+            modal.querySelector("[data-post-label]").textContent = trigger.dataset.postTitle;
+        });
+    </script>
+}

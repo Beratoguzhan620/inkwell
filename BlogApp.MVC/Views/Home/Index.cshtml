@@ -1,39 +1,86 @@
-@using BlogApp.Application.DTOs.Blog
-@model List<BlogPostDto>
+@model PostListViewModel
 @{
-    ViewData["Title"] = "Yazılar";
+    ViewData["Title"] = Model.SelectedCategory?.Name ?? (Model.Search is null ? "Yazılar" : $"“{Model.Search}” araması");
+    var result = Model.Result;
+    string PageUrl(int page) => Url.Action("Index", "Home", new { q = Model.Search, category = Model.CategoryId, page = page > 1 ? page : (int?)null })!;
 }
 
 <div class="container-reading">
-    <section class="intro">
-        <h1>Okumaya değer yazılar, sade bir sayfada.</h1>
-        <p>Inkwell'de yazarlar teknoloji, yazılım ve bilim üzerine yazıyor. Reklam yok, dikkat dağıtan hiçbir şey yok.</p>
-    </section>
-
-    @if (Model is null || Model.Count == 0)
+    @if (!Model.IsFiltered && result.Page == 1)
     {
-        <div class="empty-state">
+        <section class="intro">
+            <h1>Okumaya değer yazılar, sade bir sayfada.</h1>
+            <p>Inkwell'de yazarlar teknoloji, yazılım ve bilim üzerine yazıyor. Reklam yok, dikkat dağıtan hiçbir şey yok.</p>
+        </section>
+    }
+    else
+    {
+        <section class="intro">
+            <h1>@ViewData["Title"]</h1>
+            <p>@result.TotalCount yazı bulundu.</p>
+        </section>
+    }
+
+    <partial name="Partials/_Messages" />
+
+    <form class="search-form" method="get" asp-controller="Home" asp-action="Index" role="search">
+        @if (Model.CategoryId is not null) { <input type="hidden" name="category" value="@Model.CategoryId" /> }
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input class="form-control" type="search" name="q" value="@Model.Search" placeholder="Yazılarda ara" aria-label="Yazılarda ara" />
+    </form>
+
+    <nav class="category-chips" aria-label="Kategoriler">
+        <a class="chip @(Model.CategoryId is null ? "active" : null)" href="@Url.Action("Index", "Home", new { q = Model.Search })">Tümü</a>
+        @foreach (var category in Model.Categories)
+        {
+            <a class="chip @(Model.CategoryId == category.Id ? "active" : null)" href="@Url.Action("Index", "Home", new { q = Model.Search, category = category.Id })">
+                @category.Name <span class="count">@category.PostCount</span>
+            </a>
+        }
+    </nav>
+
+    @if (result.Items.Count == 0)
+    {
+        <div class="empty-state mt-4">
             <div class="empty-state-icon"><i class="bi bi-journal-text"></i></div>
-            <h2>Henüz yayınlanmış yazı yok</h2>
-            <p>İlk yazıyı siz yazın; onaylandığında burada görünecek.</p>
-            <a class="btn btn-primary" asp-controller="BlogPost" asp-action="Create">Yazı yaz</a>
+            @if (Model.IsFiltered)
+            {
+                <h2>Eşleşen yazı yok</h2>
+                <p>Farklı bir kelimeyle aramayı ya da başka bir kategoriyi deneyin.</p>
+                <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">Tüm yazılar</a>
+            }
+            else
+            {
+                <h2>Henüz yayınlanmış yazı yok</h2>
+                <p>İlk yazıyı siz yazın.</p>
+                <a class="btn btn-primary" asp-controller="BlogPost" asp-action="Create">Yazı yaz</a>
+            }
         </div>
     }
     else
     {
         <ol class="post-list">
-            @foreach (var post in Model)
+            @foreach (var post in result.Items)
             {
-                <li class="post-item">
-                    <div>
-                        <span class="category-label">@post.CategoryName</span>
-                        <h2><a asp-controller="BlogPost" asp-action="Content" asp-route-id="@post.Id">@post.Title</a></h2>
-                        <div class="post-meta">
-                            <span>@post.AuthorFullName</span><span class="dot"></span><time datetime="@post.CreatedAt.ToString("yyyy-MM-dd")">@post.CreatedAt.ToString("d MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))</time>
-                        </div>
-                    </div>
-                </li>
+                <partial name="Partials/_PostItem" model="post" />
             }
         </ol>
+
+        @if (result.TotalPages > 1)
+        {
+            <nav class="pager" aria-label="Sayfalar">
+                @if (result.HasPrevious)
+                {
+                    <a class="btn btn-outline-secondary" href="@PageUrl(result.Page - 1)"><i class="bi bi-arrow-left"></i>Daha yeni</a>
+                }
+                else { <span></span> }
+                <span class="text-muted small font-mono">@result.Page / @result.TotalPages</span>
+                @if (result.HasNext)
+                {
+                    <a class="btn btn-outline-secondary" href="@PageUrl(result.Page + 1)">Daha eski<i class="bi bi-arrow-right"></i></a>
+                }
+                else { <span></span> }
+            </nav>
+        }
     }
 </div>

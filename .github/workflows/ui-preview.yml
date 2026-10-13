@@ -30,6 +30,7 @@ jobs:
 
     env:
       ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=InkwellPreview;User Id=sa;Password=Preview#Passw0rd;TrustServerCertificate=True;"
+      Seed__DemoContent: "true"
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: "http://localhost:5080"
 

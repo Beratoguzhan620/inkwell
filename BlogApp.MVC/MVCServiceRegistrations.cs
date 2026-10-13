@@ -1,4 +1,5 @@
 ﻿using BlogApp.MVC.Infrastructure;
+using BlogApp.MVC.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,8 @@ public static class MVCServiceRegistrations
             messages.SetValueMustBeANumberAccessor(field => $"{field} bir sayı olmalıdır.");
             messages.SetMissingBindRequiredValueAccessor(field => $"{field} alanı zorunludur.");
         });
+
+        services.AddSingleton<CoverImageStorage>();
 
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                  .AddCookie(options =>

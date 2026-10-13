@@ -1,0 +1,107 @@
+@model BlogPostDetailDto
+@{
+    ViewData["Title"] = Model.Title;
+    ViewData["Description"] = Model.Excerpt;
+    var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+    var viewerId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var commentError = TempData["CommentError"] as string;
+}
+
+<article class="container-reading">
+    <partial name="Partials/_Messages" />
+
+    @if (Model.Status != BlogPostStatus.Approved)
+    {
+        <div class="draft-banner" role="status">
+            <span><i class="bi bi-eye-slash me-2"></i>Bu yazı taslak; yalnızca siz görebilirsiniz.</span>
+            <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">Düzenle ve yayınla</a>
+        </div>
+    }
+
+    <header class="article-header">
+        <a class="category-label" href="@Url.Action("Index", "Home", new { category = Model.CategoryId })">@Model.CategoryName</a>
+        <h1>@Model.Title</h1>
+        <div class="post-meta">
+            <span class="avatar" aria-hidden="true">@Format.Initials(Model.AuthorFullName)</span>
+            <span class="text-body fw-medium">@Model.AuthorFullName</span>
+            <span class="dot"></span><time datetime="@Model.DisplayDate.ToString("yyyy-MM-dd")">@Format.Date(Model.DisplayDate)</time>
+            <span class="dot"></span><span>@Model.ReadingMinutes dk okuma</span>
+        </div>
+        @if (Model.IsOwnedByViewer && Model.Status == BlogPostStatus.Approved)
+        {
+            <div class="article-actions">
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id"><i class="bi bi-pencil"></i>Düzenle</a>
+            </div>
+        }
+    </header>
+
+    @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+    {
+        <figure class="article-cover"><img src="@Model.CoverImageUrl" alt="" /></figure>
+    }
+
+    <div class="prose">@Html.Raw(Model.ContentHtml)</div>
+
+    <aside class="author-card" aria-label="Yazar">
+        <span class="avatar avatar-lg" aria-hidden="true">@Format.Initials(Model.AuthorFullName)</span>
+        <div>
+            <div class="name">@Model.AuthorFullName</div>
+            <p>Inkwell'de @Model.AuthorPublishedCount yazı yayınladı.</p>
+        </div>
+    </aside>
+
+    @if (Model.Status == BlogPostStatus.Approved)
+    {
+        <section class="comments" id="comments" aria-labelledby="comments-title">
+            <h2 id="comments-title">Yorumlar <span class="text-muted fw-normal font-mono fs-6">@Model.Comments.Count</span></h2>
+
+            @if (Model.Comments.Count == 0)
+            {
+                <p class="text-muted">Henüz yorum yok. İlk yorumu siz yazın.</p>
+            }
+            else
+            {
+                <ol class="comment-list">
+                    @foreach (var comment in Model.Comments)
+                    {
+                        <li class="comment">
+                            <span class="avatar" aria-hidden="true">@Format.Initials(comment.UserFullName)</span>
+                            <div>
+                                <header>
+                                    <strong>@comment.UserFullName</strong>
+                                    <time class="text-muted" datetime="@comment.CreatedAt.ToString("o")">@Format.DateTime(comment.CreatedAt)</time>
+                                    @if (viewerId == comment.UserId.ToString())
+                                    {
+                                        <form class="ms-auto" method="post" asp-action="DeleteComment" asp-route-id="@Model.Id" asp-route-commentId="@comment.Id">
+                                            <button class="btn btn-link btn-sm p-0 text-muted" type="submit">Sil</button>
+                                        </form>
+                                    }
+                                </header>
+                                <p>@comment.Content</p>
+                            </div>
+                        </li>
+                    }
+                </ol>
+            }
+
+            @if (isAuthenticated)
+            {
+                <form method="post" asp-action="AddComment" asp-route-id="@Model.Id">
+                    <label class="form-label" for="commentContent">Yorumunuz</label>
+                    <textarea class="form-control @(commentError is null ? null : "input-validation-error")" id="commentContent" name="content" rows="3" maxlength="2000" required></textarea>
+                    @if (commentError is not null)
+                    {
+                        <span class="field-validation-error">@commentError</span>
+                    }
+                    <div class="d-flex justify-content-end mt-2">
+                        <button class="btn btn-primary btn-sm" type="submit">Yorum gönder</button>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <p class="text-muted small">Yorum yazmak için <a asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@Context.Request.Path">giriş yapın</a>.</p>
+            }
+        </section>
+    }
+</article>

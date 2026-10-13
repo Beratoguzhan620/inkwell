@@ -1,0 +1,23 @@
+@model BlogPostDto
+<li class="post-item @(string.IsNullOrEmpty(Model.CoverImageUrl) ? null : "has-cover")">
+    <div>
+        <a class="category-label" href="@Url.Action("Index", "Home", new { category = Model.CategoryId })">@Model.CategoryName</a>
+        <h2><a asp-controller="BlogPost" asp-action="Detail" asp-route-slug="@Model.Slug">@Model.Title</a></h2>
+        <p class="post-excerpt">@Model.Excerpt</p>
+        <div class="post-meta">
+            <span>@Model.AuthorFullName</span>
+            <span class="dot"></span><time datetime="@Model.DisplayDate.ToString("yyyy-MM-dd")">@Format.Date(Model.DisplayDate)</time>
+            <span class="dot"></span><span>@Model.ReadingMinutes dk okuma</span>
+            @if (Model.CommentCount > 0)
+            {
+                <span class="dot"></span><span><i class="bi bi-chat me-1"></i>@Model.CommentCount</span>
+            }
+        </div>
+    </div>
+    @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+    {
+        <a class="post-cover-thumb" asp-controller="BlogPost" asp-action="Detail" asp-route-slug="@Model.Slug" tabindex="-1" aria-hidden="true">
+            <img src="@Model.CoverImageUrl" alt="" loading="lazy" />
+        </a>
+    }
+</li>
