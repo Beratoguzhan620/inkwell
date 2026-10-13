@@ -14,11 +14,11 @@ Her aşama ayrı bir branch ve PR olarak yapılır (`stage/<no>-<kisa-ad>`). Bir
 - [x] Yeni layout: okuma odaklı, geniş satır aralığı, serif başlık (Source Serif) + Plex Sans gövde
 
 ## Aşama 2 — Yazı akışının tamamlanması
-- [ ] Yazı oluşturma: `CreateBlogPost` bağlanır, `authorId` claim'den gelir; kategori dropdown'u DB'den dolar
-- [ ] Markdown editörü (EasyMDE vb.) + kapak görseli yükleme
-- [ ] Yazı listesi (sayfalama, kategori filtresi, arama), yazı detayı (okuma süresi, yazar kartı)
-- [ ] Yorumlar (giriş yapmış kullanıcı), taslak/yayınla durumu, slug'lı URL
-- [ ] Generic Repository TODO'su: ya uygulanır ya da gerekçesiyle kapatılır
+- [x] Yazı oluşturma: `CreateBlogPost` bağlanır, `authorId` claim'den gelir; kategori dropdown'u DB'den dolar
+- [x] Markdown editörü (EasyMDE vb.) + kapak görseli yükleme
+- [x] Yazı listesi (sayfalama, kategori filtresi, arama), yazı detayı (okuma süresi, yazar kartı)
+- [x] Yorumlar (giriş yapmış kullanıcı), taslak/yayınla durumu, slug'lı URL
+- [x] Generic Repository TODO'su: ya uygulanır ya da gerekçesiyle kapatılır
 
 ## Aşama 3 — Admin paneli ve hesap akışları
 - [ ] `BlogApp.Admin`: dashboard, yazılar, kategoriler, kullanıcılar, yorum moderasyonu
