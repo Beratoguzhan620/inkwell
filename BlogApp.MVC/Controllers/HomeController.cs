@@ -1,17 +1,32 @@
+using BlogApp.Application.DTOs.Blog;
 using BlogApp.Application.Services.Abstract;
 using BlogApp.MVC.Models;
+using BlogApp.MVC.Models.BlogPost;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace BlogApp.MVC.Controllers;
 
-public class HomeController(IBlogPostService blogPostService) : Controller
+public class HomeController(IBlogPostService blogPostService, ICategoryService categoryService) : Controller
 {
-    public async Task<IActionResult> IndexAsync()
+    public async Task<IActionResult> Index([FromQuery] string? q = null, [FromQuery] int? category = null, [FromQuery] int page = 1)
     {
-        var result = await blogPostService.GetAllBlogPosts();
+        var search = string.IsNullOrWhiteSpace(q) ? null : q.Trim();
+        var result = await blogPostService.GetPublishedAsync(new PostListQuery
+        {
+            Search = search,
+            CategoryId = category,
+            Page = page,
+        });
+        var categories = await categoryService.GetAllCategoriesAsync();
 
-        return View(result.Data ?? []);
+        return View(new PostListViewModel
+        {
+            Result = result,
+            Categories = categories.Data ?? [],
+            Search = search,
+            CategoryId = category,
+        });
     }
 
     [HttpGet("/not-found")]

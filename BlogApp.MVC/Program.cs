@@ -28,10 +28,16 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await dbContext.Database.MigrateAsync();
     await DbSeeder.SeedAsync(dbContext);
+
+    if (app.Configuration.GetValue<bool>("Seed:DemoContent"))
+        await DemoContentSeeder.SeedAsync(dbContext);
 }
 
 app.UseStatusCodePagesWithReExecute("/not-found");
 app.UseHttpsRedirection();
+
+// Covers uploaded at runtime are not part of the build-time static asset manifest.
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
