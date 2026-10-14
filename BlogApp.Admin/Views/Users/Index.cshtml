@@ -1,0 +1,106 @@
+@model UserListViewModel
+@{
+    ViewData["Title"] = "Kullanıcılar";
+    var q = Model.Query;
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+}
+
+<partial name="Partials/_ViewMessages" />
+
+<div class="page-header">
+    <div>
+        <h1>Kullanıcılar</h1>
+        <p>Rol değişikliği kullanıcının bir sonraki girişinde geçerli olur. Okurlar yalnızca yorum yapabilir.</p>
+    </div>
+</div>
+
+<div class="card">
+    <form class="filter-bar" method="get" asp-action="Index" role="search">
+        <div class="search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input class="form-control form-control-sm" type="search" name="search" value="@q.Search" placeholder="Ad veya e-posta ara" aria-label="Ad veya e-posta ara" />
+        </div>
+        <select class="form-select form-select-sm" name="role" aria-label="Rol">
+            <option value="">Tüm roller</option>
+            @foreach (var role in RoleConstants.All.Values)
+            {
+                <option value="@role" selected="@(q.Role == role)">@Display.RoleLabel(role)</option>
+            }
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" type="submit">Filtrele</button>
+    </form>
+
+    @if (Model.Result.Items.Count == 0)
+    {
+        <partial name="Partials/_EmptyState" model="@(("Kullanıcı bulunamadı", "Filtreleri değiştirerek tekrar deneyin.", "bi-people"))" />
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead><tr><th>Kullanıcı</th><th>Rol</th><th class="num">Yazı</th><th>Durum</th><th><span class="visually-hidden">İşlemler</span></th></tr></thead>
+                <tbody>
+                    @foreach (var u in Model.Result.Items)
+                    {
+                        var isSelf = u.Id.ToString() == currentUserId;
+                        <tr>
+                            <td>
+                                <div class="fw-medium">@u.FullName</div>
+                                <div class="text-muted small">@u.Email</div>
+                            </td>
+                            <td>
+                                <form class="d-flex gap-2" method="post" asp-action="SetRole" asp-route-id="@u.Id">
+                                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                    <select class="form-select form-select-sm" name="roleId" aria-label="@u.FullName rolü" disabled="@isSelf">
+                                        @foreach (var (id, name) in RoleConstants.All)
+                                        {
+                                            <option value="@id" selected="@(u.Role == name)">@Display.RoleLabel(name)</option>
+                                        }
+                                    </select>
+                                    @if (!isSelf)
+                                    {
+                                        <button class="btn btn-outline-secondary btn-sm" type="submit">Uygula</button>
+                                    }
+                                </form>
+                            </td>
+                            <td class="num">@u.PostCount</td>
+                            <td>
+                                @if (!u.IsEmailVerified)
+                                {
+                                    <span class="badge badge-warning">Doğrulanmadı</span>
+                                }
+                                else
+                                {
+                                    <span class="status-dot @(u.IsActive ? null : "off")">@(u.IsActive ? "Etkin" : "Devre dışı")</span>
+                                }
+                            </td>
+                            <td class="text-end text-nowrap">
+                                @if (!isSelf && u.IsEmailVerified)
+                                {
+                                    if (u.IsActive)
+                                    {
+                                        <form class="d-inline" method="post" asp-action="Deactivate" asp-route-id="@u.Id"
+                                              data-confirm="@u.FullName giriş yapamayacak." data-confirm-title="Hesabı devre dışı bırak" data-confirm-ok="Devre dışı bırak">
+                                            <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                            <button class="btn btn-ghost btn-sm" type="submit">Devre dışı bırak</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form class="d-inline" method="post" asp-action="Activate" asp-route-id="@u.Id">
+                                            <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                            <button class="btn btn-ghost btn-sm" type="submit">Etkinleştir</button>
+                                        </form>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <partial name="Partials/_Pager" model="PagerViewModel.From(Model.Result)" />
+</div>

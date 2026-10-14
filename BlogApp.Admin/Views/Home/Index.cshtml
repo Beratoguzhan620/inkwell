@@ -1,0 +1,91 @@
+@model AdminDashboardDto
+@{
+    ViewData["Title"] = "Özet";
+}
+
+<partial name="Partials/_ViewMessages" />
+
+<div class="page-header">
+    <div>
+        <h1>Özet</h1>
+        <p>Yayındaki içerik, topluluk ve son hareketler.</p>
+    </div>
+</div>
+
+<div class="stat-grid">
+    <a class="stat-card" asp-controller="Posts" asp-action="Index" asp-route-status="Published">
+        <span class="label"><i class="bi bi-journal-check"></i>Yayındaki yazı</span>
+        <span class="value">@Model.PublishedPosts</span>
+        <span class="hint">@Model.DraftPosts taslak</span>
+    </a>
+    <a class="stat-card @(Model.HiddenPosts > 0 ? "attention" : null)" asp-controller="Posts" asp-action="Index" asp-route-status="Hidden">
+        <span class="label"><i class="bi bi-slash-circle"></i>Kaldırılan yazı</span>
+        <span class="value">@Model.HiddenPosts</span>
+        <span class="hint">yönetici kararıyla</span>
+    </a>
+    <a class="stat-card" asp-controller="Users" asp-action="Index">
+        <span class="label"><i class="bi bi-people"></i>Kullanıcı</span>
+        <span class="value">@Model.Users</span>
+        <span class="hint">@Model.Authors yazar</span>
+    </a>
+    <a class="stat-card" asp-controller="Comments" asp-action="Index">
+        <span class="label"><i class="bi bi-chat-square-text"></i>Yorum</span>
+        <span class="value">@Model.CommentsLast7Days</span>
+        <span class="hint">son 7 gün</span>
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-xl-7">
+        <section class="card h-100" aria-labelledby="recentPosts">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 class="h6 mb-0" id="recentPosts">Son yazılar</h2>
+                <a class="small" asp-controller="Posts" asp-action="Index">Tümü</a>
+            </div>
+            @if (Model.RecentPosts.Count == 0)
+            {
+                <partial name="Partials/_EmptyState" model="@(("Henüz yazı yok", "Yazarlar yazı ekledikçe burada görünecek.", "bi-journal-text"))" />
+            }
+            else
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var post in Model.RecentPosts)
+                    {
+                        var (text, css) = Display.Status(post.Status);
+                        <li class="list-group-item d-flex justify-content-between gap-3">
+                            <div class="min-w-0">
+                                <div class="fw-medium text-truncate">@post.Title</div>
+                                <div class="text-muted small">@post.AuthorName · @Display.Date(post.CreatedAt)</div>
+                            </div>
+                            <span class="badge @css align-self-center">@text</span>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+    </div>
+    <div class="col-xl-5">
+        <section class="card h-100" aria-labelledby="recentComments">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 class="h6 mb-0" id="recentComments">Son yorumlar</h2>
+                <a class="small" asp-controller="Comments" asp-action="Index">Tümü</a>
+            </div>
+            @if (Model.RecentComments.Count == 0)
+            {
+                <partial name="Partials/_EmptyState" model="@(("Henüz yorum yok", "Okurlar yorum yaptıkça burada görünecek.", "bi-chat-square-text"))" />
+            }
+            else
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var c in Model.RecentComments)
+                    {
+                        <li class="list-group-item">
+                            <div class="small"><span class="fw-medium">@c.UserName</span> <span class="text-muted">· @c.PostTitle</span></div>
+                            <div class="comment-text text-truncate">@c.Content</div>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+    </div>
+</div>

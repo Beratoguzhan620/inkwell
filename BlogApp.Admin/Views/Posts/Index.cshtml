@@ -1,0 +1,105 @@
+@model PostListViewModel
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@{
+    ViewData["Title"] = "Yazılar";
+    var q = Model.Query;
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var siteUrl = string.IsNullOrWhiteSpace(Configuration["SiteUrl"]) ? null : Configuration["SiteUrl"]!.TrimEnd('/');
+}
+
+<partial name="Partials/_ViewMessages" />
+
+<div class="page-header">
+    <div>
+        <h1>Yazılar</h1>
+        <p>Kurallara uymayan yazıları yayından kaldırabilir, gerekirse tamamen silebilirsiniz.</p>
+    </div>
+</div>
+
+<div class="card">
+    <form class="filter-bar" method="get" asp-action="Index" role="search">
+        <div class="search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input class="form-control form-control-sm" type="search" name="search" value="@q.Search" placeholder="Başlık veya yazar ara" aria-label="Başlık veya yazar ara" />
+        </div>
+        <select class="form-select form-select-sm" name="categoryId" aria-label="Kategori">
+            <option value="">Tüm kategoriler</option>
+            @foreach (var c in Model.Categories)
+            {
+                <option value="@c.Id" selected="@(q.CategoryId == c.Id)">@c.Name</option>
+            }
+        </select>
+        <select class="form-select form-select-sm" name="status" aria-label="Durum">
+            <option value="All" selected="@(q.Status == PostStatusFilter.All)">Tüm durumlar</option>
+            <option value="Published" selected="@(q.Status == PostStatusFilter.Published)">Yayında</option>
+            <option value="Draft" selected="@(q.Status == PostStatusFilter.Draft)">Taslak</option>
+            <option value="Hidden" selected="@(q.Status == PostStatusFilter.Hidden)">Kaldırıldı</option>
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" type="submit">Filtrele</button>
+        @if (!string.IsNullOrEmpty(q.Search) || q.CategoryId is not null || q.Status != PostStatusFilter.All)
+        {
+            <a class="btn btn-ghost btn-sm" asp-action="Index">Temizle</a>
+        }
+    </form>
+
+    @if (Model.Result.Items.Count == 0)
+    {
+        <partial name="Partials/_EmptyState" model="@(("Yazı bulunamadı", "Filtreleri değiştirerek tekrar deneyin.", "bi-journal-text"))" />
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr><th>Yazı</th><th>Yazar</th><th>Durum</th><th class="num">Yorum</th><th><span class="visually-hidden">İşlemler</span></th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model.Result.Items)
+                    {
+                        var (text, css) = Display.Status(p.Status);
+                        <tr>
+                            <td>
+                                @if (siteUrl is not null && p.Status == BlogPostStatus.Approved)
+                                {
+                                    <a class="fw-medium text-body" href="@siteUrl/posts/@p.Slug" target="_blank" rel="noopener">@p.Title</a>
+                                }
+                                else
+                                {
+                                    <span class="fw-medium">@p.Title</span>
+                                }
+                                <div class="text-muted small">@p.CategoryName · @Display.Date(p.PublishedAt ?? p.CreatedAt)</div>
+                            </td>
+                            <td>@p.AuthorName</td>
+                            <td><span class="badge @css">@text</span></td>
+                            <td class="num">@p.CommentCount</td>
+                            <td class="text-end text-nowrap">
+                                @if (p.Status == BlogPostStatus.Approved)
+                                {
+                                    <form class="d-inline" method="post" asp-action="Hide" asp-route-id="@p.Id"
+                                          data-confirm="“@p.Title” okurlardan gizlenecek. Yazar yazıyı görmeye devam eder." data-confirm-title="Yayından kaldır" data-confirm-ok="Kaldır">
+                                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                        <button class="btn btn-outline-secondary btn-sm" type="submit">Yayından kaldır</button>
+                                    </form>
+                                }
+                                else if (p.Status == BlogPostStatus.Rejected)
+                                {
+                                    <form class="d-inline" method="post" asp-action="Restore" asp-route-id="@p.Id">
+                                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                        <button class="btn btn-outline-secondary btn-sm" type="submit">Geri yayınla</button>
+                                    </form>
+                                }
+                                <form class="d-inline" method="post" asp-action="Delete" asp-route-id="@p.Id"
+                                      data-confirm="“@p.Title” ve tüm yorumları kalıcı olarak silinecek." data-confirm-title="Yazıyı sil" data-confirm-ok="Sil">
+                                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                    <button class="btn btn-ghost btn-sm" type="submit">Sil</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <partial name="Partials/_Pager" model="PagerViewModel.From(Model.Result)" />
+</div>

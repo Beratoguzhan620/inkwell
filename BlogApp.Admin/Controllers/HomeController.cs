@@ -1,24 +1,23 @@
-using BlogApp.Admin.Models;
+using BlogApp.Application.Services.Abstract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace BlogApp.Admin.Controllers;
 
-public class HomeController : Controller
+public class HomeController(IAdminService adminService) : AdminControllerBase
 {
-    public IActionResult Index()
+    public async Task<IActionResult> Index() => View(await adminService.GetDashboardAsync());
+
+    [AllowAnonymous]
+    [Route("/not-found")]
+    public IActionResult PageNotFound()
     {
-        return View();
+        Response.StatusCode = StatusCodes.Status404NotFound;
+        return View("Status", ("Sayfa bulunamadı", "Aradığınız kayıt silinmiş ya da adres hatalı olabilir.", "bi-signpost-split"));
     }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
+    [AllowAnonymous]
+    [Route("/error")]
+    public IActionResult Error() =>
+        View("Status", ("Bir hata oluştu", "İsteğiniz işlenirken beklenmeyen bir hata oluştu. Biraz sonra tekrar deneyin.", "bi-exclamation-triangle"));
 }

@@ -1,0 +1,62 @@
+@model List<CategoryDto>
+@{
+    ViewData["Title"] = "Kategoriler";
+}
+
+<partial name="Partials/_ViewMessages" />
+
+<div class="page-header">
+    <div>
+        <h1>Kategoriler</h1>
+        <p>Yazı olan kategori silinemez; önce yazıları başka kategoriye taşınmalıdır.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card">
+            @if (Model.Count == 0)
+            {
+                <partial name="Partials/_EmptyState" model="@(("Kategori yok", "Sağdaki formla ilk kategoriyi ekleyin.", "bi-tags"))" />
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead><tr><th>Kategori</th><th class="num">Yayındaki yazı</th><th><span class="visually-hidden">İşlemler</span></th></tr></thead>
+                        <tbody>
+                            @foreach (var c in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <form class="d-flex gap-2" method="post" asp-action="Rename" asp-route-id="@c.Id">
+                                            <input class="form-control form-control-sm" name="name" value="@c.Name" maxlength="100" aria-label="@c.Name kategorisinin adı" />
+                                            <button class="btn btn-outline-secondary btn-sm" type="submit">Kaydet</button>
+                                        </form>
+                                    </td>
+                                    <td class="num">@c.PostCount</td>
+                                    <td class="text-end">
+                                        <form method="post" asp-action="Delete" asp-route-id="@c.Id"
+                                              data-confirm="“@c.Name” kategorisi silinecek." data-confirm-title="Kategoriyi sil" data-confirm-ok="Sil">
+                                            <button class="btn btn-ghost btn-sm" type="submit">Sil</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <form class="card" method="post" asp-action="Create">
+            <div class="card-header"><h2 class="h6 mb-0">Kategori ekle</h2></div>
+            <div class="card-body">
+                <label class="form-label" for="newCategory">Kategori adı</label>
+                <input class="form-control" id="newCategory" name="name" maxlength="100" required placeholder="Ör. Tasarım" />
+                <button class="btn btn-primary w-100 mt-3" type="submit">Ekle</button>
+            </div>
+        </form>
+    </div>
+</div>
