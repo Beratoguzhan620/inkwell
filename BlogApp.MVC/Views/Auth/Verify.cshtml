@@ -28,6 +28,11 @@
             <button type="submit" class="btn btn-primary w-100">Doğrula</button>
         </form>
 
-        <p class="auth-switch"><a asp-controller="Auth" asp-action="Login">Giriş sayfasına dön</a></p>
+        <form class="auth-switch" asp-controller="Auth" asp-action="ResendVerification" method="post">
+            <input type="hidden" name="userId" value="@userId" />
+            Kod gelmedi mi? <button type="submit" class="btn btn-link p-0 align-baseline">Yeni kod gönder</button>
+        </form>
+
+        <p class="auth-switch mt-2"><a asp-controller="Auth" asp-action="Login">Giriş sayfasına dön</a></p>
     </div>
 </div>

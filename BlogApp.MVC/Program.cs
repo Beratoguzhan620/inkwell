@@ -28,6 +28,7 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await dbContext.Database.MigrateAsync();
     await DbSeeder.SeedAsync(dbContext);
+    await DbSeeder.SeedAdminAsync(dbContext, app.Configuration["Admin:Email"], app.Configuration["Admin:Password"]);
 
     if (app.Configuration.GetValue<bool>("Seed:DemoContent"))
         await DemoContentSeeder.SeedAsync(dbContext);

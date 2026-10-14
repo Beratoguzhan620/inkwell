@@ -7,6 +7,7 @@
         && (a is null || string.Equals(action, a, StringComparison.OrdinalIgnoreCase)) ? "active" : null;
 
     var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+    var canWrite = User.IsInRole(BlogApp.Data.Constants.RoleConstants.Admin) || User.IsInRole(BlogApp.Data.Constants.RoleConstants.Author);
     var fullName = User.FindFirstValue("FullName") ?? User.FindFirstValue(ClaimTypes.Name) ?? "";
     var initials = string.Concat(fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => char.ToUpper(p[0])));
 }
@@ -17,7 +18,7 @@
 
             <nav class="site-nav" aria-label="Ana menü">
                 <a class="@Active("Home")" asp-controller="Home" asp-action="Index">Yazılar</a>
-                @if (isAuthenticated)
+                @if (canWrite)
                 {
                     <a class="@Active("BlogPost", "Mine")" asp-controller="BlogPost" asp-action="Mine">Yazılarım</a>
                 }
@@ -26,14 +27,20 @@
             <div class="header-actions">
                 @if (isAuthenticated)
                 {
-                    <a class="btn btn-primary btn-sm btn-write" asp-controller="BlogPost" asp-action="Create"><i class="bi bi-pencil"></i><span>Yaz</span></a>
+                    @if (canWrite)
+                    {
+                        <a class="btn btn-primary btn-sm btn-write" asp-controller="BlogPost" asp-action="Create"><i class="bi bi-pencil"></i><span>Yaz</span></a>
+                    }
                     <div class="dropdown">
                         <button class="user-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Hesap menüsü">
                             <span class="avatar">@initials</span><span class="user-name">@fullName</span><i class="bi bi-chevron-down small"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" asp-controller="BlogPost" asp-action="Mine"><i class="bi bi-journal-text me-2"></i>Yazılarım</a></li>
-                            <li><hr class="dropdown-divider" /></li>
+                            @if (canWrite)
+                            {
+                                <li><a class="dropdown-item" asp-controller="BlogPost" asp-action="Mine"><i class="bi bi-journal-text me-2"></i>Yazılarım</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                            }
                             <li><a class="dropdown-item" asp-controller="Auth" asp-action="Logout"><i class="bi bi-box-arrow-right me-2"></i>Çıkış yap</a></li>
                         </ul>
                     </div>
@@ -47,7 +54,7 @@
         </div>
         <nav class="mobile-nav" aria-label="Ana menü">
             <a class="@Active("Home")" asp-controller="Home" asp-action="Index">Yazılar</a>
-            @if (isAuthenticated)
+            @if (canWrite)
             {
                 <a class="@Active("BlogPost", "Mine")" asp-controller="BlogPost" asp-action="Mine">Yazılarım</a>
             }

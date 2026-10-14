@@ -98,6 +98,70 @@ for (const [device, options] of Object.entries(viewports)) {
   await context.close();
 }
 
+// Accounts: password reset, the reader role and the admin panel.
+const adminUrl = process.env.ADMIN_URL ?? "http://localhost:5081";
+{
+  const context = await browser.newContext({ ...viewports.desktop, locale: "tr-TR" });
+  const page = await context.newPage();
+
+  await page.goto(`${baseUrl}/forgot-password`);
+  await page.fill("#Email", "zeynep@example.com");
+  await Promise.all([page.waitForNavigation(), page.click("form button[type=submit]")]);
+  await shot(page, "desktop-forgot-password-sent");
+  const resetLink = await page.getAttribute(".alert a[href*='reset-password']", "href");
+  await page.goto(resetLink);
+  await page.fill("#Password", "Yeni123!");
+  await page.fill("#ConfirmPassword", "Yeni123!");
+  await shot(page, "desktop-reset-password");
+  await Promise.all([page.waitForNavigation(), page.click("form button[type=submit]")]);
+  await shot(page, "desktop-reset-done");
+
+  await page.fill("#Email", "okur@example.com");
+  await page.fill("#Password", password);
+  await Promise.all([page.waitForNavigation(), page.click("form button[type=submit]")]);
+  await shot(page, "desktop-reader-home");
+  await page.goto(`${baseUrl}/write`);
+  await shot(page, "desktop-reader-cannot-write");
+  await context.close();
+}
+
+for (const [device, options] of Object.entries(viewports)) {
+  const context = await browser.newContext({ ...options, locale: "tr-TR" });
+  const page = await context.newPage();
+
+  await page.goto(`${adminUrl}/login`);
+  await shot(page, `${device}-admin-login`);
+  await page.fill("#Email", "admin@example.com");
+  await page.fill("#Password", password);
+  await Promise.all([page.waitForNavigation(), page.click("form button[type=submit]")]);
+  await shot(page, `${device}-admin-dashboard`);
+
+  await page.goto(`${adminUrl}/posts`);
+  await shot(page, `${device}-admin-posts`);
+  await page.goto(`${adminUrl}/users`);
+  await shot(page, `${device}-admin-users`);
+  await page.goto(`${adminUrl}/comments`);
+  await shot(page, `${device}-admin-comments`);
+  await page.goto(`${adminUrl}/categories`);
+  await shot(page, `${device}-admin-categories`);
+
+  if (device === "desktop") {
+    await page.goto(`${adminUrl}/posts?search=gökyüzünde`);
+    await page.click("form[action$='/hide'] button");
+    await page.waitForTimeout(400);
+    await shot(page, `${device}-admin-confirm`);
+    await Promise.all([page.waitForNavigation(), page.click("[data-confirm-accept]")]);
+    await shot(page, `${device}-admin-post-hidden`);
+
+    await page.goto(`${adminUrl}/users?search=okur`);
+    await page.selectOption("select[name=roleId]", "2");
+    await Promise.all([page.waitForNavigation(), page.click("form[action$='/role'] button")]);
+    await shot(page, `${device}-admin-role-changed`);
+  }
+
+  await context.close();
+}
+
 await browser.close();
 
 if (problems.length > 0) {

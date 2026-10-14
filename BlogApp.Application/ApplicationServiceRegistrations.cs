@@ -14,6 +14,7 @@ public static class ApplicationServiceRegistrations
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IMailService, SmtpMailService>();
         services.AddScoped<ICommentService, CommentService>();
+        services.AddScoped<IAdminService, AdminService>();
         services.TryAddSingleton(TimeProvider.System);
 
         return services;

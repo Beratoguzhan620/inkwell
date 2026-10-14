@@ -33,7 +33,7 @@ public static class MVCServiceRegistrations
 
                      options.LoginPath = "/Login"; 
                      options.LogoutPath = "/Logout"; 
-                     options.AccessDeniedPath = "/not-found";
+                     options.AccessDeniedPath = "/access-denied";
 
                      options.ExpireTimeSpan = TimeSpan.FromHours(3);
                      options.SlidingExpiration = true; 

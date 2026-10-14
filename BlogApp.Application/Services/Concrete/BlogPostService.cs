@@ -175,6 +175,9 @@ public class BlogPostService(AppDbContext context, TimeProvider timeProvider) : 
 
         var wasPublished = post.Status == BlogPostStatus.Approved;
 
+        if (post.Status == BlogPostStatus.Rejected && request.Publish)
+            return Result<string>.Fail("Bu yazı yönetici tarafından yayından kaldırıldı. Yeniden yayınlamak için yöneticiyle iletişime geçin.");
+
         // The URL stays stable once a post has been published, so shared links keep working.
         if (!wasPublished && !string.Equals(post.Title, request.Title.Trim(), StringComparison.Ordinal))
             post.Slug = await CreateUniqueSlugAsync(request.Title, post.Id);
@@ -195,7 +198,7 @@ public class BlogPostService(AppDbContext context, TimeProvider timeProvider) : 
             post.Status = BlogPostStatus.Approved;
             post.PublishedAt = UtcNow;
         }
-        else if (!request.Publish && wasPublished)
+        else if (!request.Publish && post.Status != BlogPostStatus.Rejected)
         {
             post.Status = BlogPostStatus.Draft;
         }

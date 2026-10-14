@@ -1,0 +1,39 @@
+@using System.Security.Claims
+@{
+    var fullName = User.FindFirstValue("FullName") ?? "";
+    var email = User.FindFirstValue(ClaimTypes.Email);
+    var initials = string.Concat(fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => char.ToUpperInvariant(p[0])));
+}
+
+<header class="app-topbar">
+    <button class="btn btn-ghost btn-sm d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#appSidebar" aria-controls="appSidebar" aria-label="Menüyü aç">
+        <i class="bi bi-list fs-5"></i>
+    </button>
+
+    <a class="brand" asp-controller="Home" asp-action="Index">
+        <span class="brand-mark" style="font-family: Georgia, serif; font-style: italic">i</span>Inkwell <span class="text-muted fw-normal ms-1">Yönetim</span>
+    </a>
+
+    <div class="dropdown ms-auto">
+        <button class="user-chip" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="avatar">@initials</span>
+            <span class="d-none d-sm-flex flex-column align-items-start lh-sm">
+                <span class="fw-medium">@fullName</span>
+                <span class="text-muted small">Yönetici</span>
+            </span>
+            <i class="bi bi-chevron-down small text-muted ms-1"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li class="px-3 py-2">
+                <div class="fw-medium">@fullName</div>
+                <div class="text-muted small">@email</div>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+                <form method="post" asp-controller="Auth" asp-action="Logout">
+                    <button class="dropdown-item d-flex align-items-center gap-2" type="submit"><i class="bi bi-box-arrow-right"></i>Çıkış yap</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</header>

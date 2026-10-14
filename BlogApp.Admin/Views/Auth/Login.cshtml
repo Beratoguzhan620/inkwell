@@ -1,0 +1,40 @@
+@model LoginViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Giriş";
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <partial name="Partials/_Head" />
+</head>
+<body>
+    <main class="admin-login">
+        <div class="card">
+            <div class="card-body p-4 p-sm-5">
+                <div class="brand mb-4"><span class="brand-mark" style="font-family: Georgia, serif; font-style: italic">i</span>Inkwell <span class="text-muted fw-normal ms-1">Yönetim</span></div>
+                <h1 class="h4 mb-1">Yönetici girişi</h1>
+                <p class="text-muted mb-4">Bu panel yalnızca yönetici hesapları içindir.</p>
+
+                <partial name="Partials/_ViewMessages" />
+
+                <form asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@ViewBag.ReturnUrl" method="post" novalidate>
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="Email"></label>
+                        <input class="form-control" asp-for="Email" type="email" autocomplete="username" autofocus />
+                        <span asp-validation-for="Email"></span>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label" asp-for="Password"></label>
+                        <input class="form-control" asp-for="Password" type="password" autocomplete="current-password" />
+                        <span asp-validation-for="Password"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Giriş yap</button>
+                </form>
+            </div>
+        </div>
+    </main>
+    <partial name="Partials/_Scripts" />
+    <partial name="_ValidationScriptsPartial" />
+</body>
+</html>

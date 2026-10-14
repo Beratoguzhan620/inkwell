@@ -1,6 +1,7 @@
 using BlogApp.Application.DTOs.Blog;
 using BlogApp.Application.Services.Abstract;
 using BlogApp.MVC.Models.BlogPost;
+using BlogApp.Data.Constants;
 using BlogApp.MVC.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,14 +38,14 @@ public class BlogPostController(
         return slug is null ? NotFound() : RedirectToActionPermanent(nameof(Detail), new { slug });
     }
 
-    [Authorize]
+    [Authorize(Roles = RoleConstants.CanWrite)]
     [HttpGet("/my-posts")]
     public async Task<IActionResult> Mine()
     {
         return View(await blogPostService.GetAuthorPostsAsync(CurrentUserId!.Value));
     }
 
-    [Authorize]
+    [Authorize(Roles = RoleConstants.CanWrite)]
     [HttpGet("/write")]
     public async Task<IActionResult> Create()
     {
@@ -52,7 +53,7 @@ public class BlogPostController(
         return View("Editor", new PostEditorViewModel());
     }
 
-    [Authorize]
+    [Authorize(Roles = RoleConstants.CanWrite)]
     [HttpPost("/write")]
     public async Task<IActionResult> Create(PostEditorViewModel model, string? intent)
     {
@@ -83,7 +84,7 @@ public class BlogPostController(
         return RedirectToAction(nameof(Detail), new { slug = result.Data });
     }
 
-    [Authorize]
+    [Authorize(Roles = RoleConstants.CanWrite)]
     [HttpGet("/posts/{id:int}/edit")]
     public async Task<IActionResult> Edit(int id)
     {
@@ -106,7 +107,7 @@ public class BlogPostController(
         });
     }
 
-    [Authorize]
+    [Authorize(Roles = RoleConstants.CanWrite)]
     [HttpPost("/posts/{id:int}/edit")]
     public async Task<IActionResult> Edit(int id, PostEditorViewModel model, string? intent)
     {
@@ -140,7 +141,7 @@ public class BlogPostController(
         return RedirectToAction(nameof(Detail), new { slug = result.Data });
     }
 
-    [Authorize]
+    [Authorize(Roles = RoleConstants.CanWrite)]
     [HttpPost("/posts/{id:int}/delete")]
     public async Task<IActionResult> Delete(int id)
     {

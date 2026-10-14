@@ -1,0 +1,69 @@
+@model CommentListViewModel
+@{
+    ViewData["Title"] = "Yorumlar";
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+
+<partial name="Partials/_ViewMessages" />
+
+<div class="page-header">
+    <div>
+        <h1>Yorumlar</h1>
+        <p>Yorumlar anında yayınlanır; uygunsuz olanları buradan silebilirsiniz.</p>
+    </div>
+</div>
+
+<div class="card" data-bulk>
+    <form class="filter-bar" method="get" asp-action="Index" role="search">
+        <div class="search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input class="form-control form-control-sm" type="search" name="search" value="@Model.Query.Search" placeholder="Yorum, yazı veya kullanıcı ara" aria-label="Yorumlarda ara" />
+        </div>
+        <button class="btn btn-outline-secondary btn-sm" type="submit">Ara</button>
+    </form>
+
+    <form method="post" asp-action="Delete">
+        <input type="hidden" name="returnUrl" value="@returnUrl" />
+        <div class="bulk-bar" data-bulk-bar>
+            <span class="count" data-bulk-count></span>
+            <button class="btn btn-outline-secondary btn-sm" type="submit"
+                    data-confirm="Seçili yorumlar kalıcı olarak silinecek." data-confirm-title="Yorumları sil" data-confirm-ok="Sil">Sil</button>
+        </div>
+
+        @if (Model.Result.Items.Count == 0)
+        {
+            <partial name="Partials/_EmptyState" model="@(("Yorum bulunamadı", "Okurlar yorum yaptıkça burada listelenir.", "bi-chat-square-text"))" />
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th class="check-col"><input class="form-check-input" type="checkbox" data-bulk-all aria-label="Tümünü seç" /></th>
+                            <th>Yorum</th>
+                            <th>Yazı</th>
+                            <th>Tarih</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var c in Model.Result.Items)
+                        {
+                            <tr>
+                                <td class="check-col"><input class="form-check-input" type="checkbox" name="ids" value="@c.Id" data-bulk-item aria-label="Yorumu seç" /></td>
+                                <td>
+                                    <div class="fw-medium small mb-1">@c.UserName</div>
+                                    <div class="comment-text">@c.Content</div>
+                                </td>
+                                <td>@c.PostTitle</td>
+                                <td class="text-muted text-nowrap">@Display.DateTime(c.CreatedAt)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </form>
+
+    <partial name="Partials/_Pager" model="PagerViewModel.From(Model.Result)" />
+</div>

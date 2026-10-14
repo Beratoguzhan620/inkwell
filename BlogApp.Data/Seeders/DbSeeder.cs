@@ -1,4 +1,5 @@
-﻿using BlogApp.Data.Constants;
+using BlogApp.Core.Security;
+using BlogApp.Data.Constants;
 using BlogApp.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,24 +14,49 @@ public class DbSeeder
         await SeedCategoriesAsync(context);
     }
 
+    /// <summary>
+    /// Makes sure the three roles exist with their current names. Older databases used
+    /// "Moderator" and "VerifiedUser" for ids 2 and 3; those rows are renamed in place.
+    /// </summary>
     public static async Task SeedRolesAsync(AppDbContext context)
     {
-        var roleIds = new[] { RoleConstants.AdminId, RoleConstants.ModeratorId, RoleConstants.VerifiedUserId };
-
-        if (await context.Roles.AnyAsync(r => roleIds.Contains(r.Id)))
-            return;
-
-        var roles = new List<Role>
+        foreach (var (id, name) in RoleConstants.All)
         {
-            new() { Id = RoleConstants.AdminId, Name = RoleConstants.Admin },
-            new() { Id = RoleConstants.ModeratorId, Name = RoleConstants.Moderator },
-            new() { Id = RoleConstants.VerifiedUserId, Name = RoleConstants.VerifiedUser },
-        };
+            var role = await context.Roles.FirstOrDefaultAsync(r => r.Id == id);
 
-        await context.Roles.AddRangeAsync(roles);
+            if (role is null)
+                context.Roles.Add(new Role { Id = id, Name = name });
+            else if (role.Name != name)
+                role.Name = name;
+        }
+
         await context.SaveChangesAsync();
     }
 
+    /// <summary>Creates the first administrator from configuration (Admin:Email, Admin:Password) if it does not exist.</summary>
+    public static async Task SeedAdminAsync(AppDbContext context, string? email, string? password, string firstName = "Site", string lastName = "Yöneticisi")
+    {
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            return;
+
+        if (await context.Users.AnyAsync(u => u.Email == email))
+            return;
+
+        var hash = HashingHelper.CreatePasswordHash(password);
+        context.Users.Add(new User
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email,
+            PasswordHash = hash.Hash,
+            PasswordSalt = hash.Salt,
+            IsActive = true,
+            IsEmailVerified = true,
+            UserRoles = [new UserRole { RoleId = RoleConstants.AdminId }],
+        });
+
+        await context.SaveChangesAsync();
+    }
 
     public static async Task SeedCategoriesAsync(AppDbContext context)
     {
