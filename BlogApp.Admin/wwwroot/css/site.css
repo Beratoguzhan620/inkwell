@@ -88,7 +88,7 @@ a.stat-card:hover { border-color: #C9C5BC; color: var(--iw-text); }
 }
 
 .filter-bar .search .form-control { padding-left: 32px; }
-.filter-bar .form-select { width: auto; }
+.filter-bar .form-select { width: auto; min-width: 150px; padding-right: 2.25rem; }
 
 .bulk-bar {
     display: none;
