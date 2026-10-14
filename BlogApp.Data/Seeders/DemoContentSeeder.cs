@@ -38,7 +38,14 @@ public static class DemoContentSeeder
         context.Users.AddRange(authors);
         await context.SaveChangesAsync();
 
-        context.UserRoles.AddRange(authors.Select(a => new UserRole { UserId = a.Id, RoleId = RoleConstants.VerifiedUserId }));
+        context.UserRoles.AddRange(authors.Select(a => new UserRole { UserId = a.Id, RoleId = RoleConstants.AuthorId }));
+
+        var reader = CreateUser("Mert", "Yıldız", "okur@example.com");
+        context.Users.Add(reader);
+        await context.SaveChangesAsync();
+        context.UserRoles.Add(new UserRole { UserId = reader.Id, RoleId = RoleConstants.ReaderId });
+
+        await DbSeeder.SeedAdminAsync(context, "admin@example.com", DemoPassword, "Selin", "Kara");
 
         var start = new DateTime(2026, 6, 2, 8, 30, 0, DateTimeKind.Utc);
         var posts = Posts.Select((p, i) => new BlogPost
