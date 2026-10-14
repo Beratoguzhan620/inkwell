@@ -13,8 +13,15 @@
     @if (Model.Status != BlogPostStatus.Approved)
     {
         <div class="draft-banner" role="status">
-            <span><i class="bi bi-eye-slash me-2"></i>Bu yazı taslak; yalnızca siz görebilirsiniz.</span>
-            <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">Düzenle ve yayınla</a>
+            @if (Model.Status == BlogPostStatus.Rejected)
+            {
+                <span><i class="bi bi-slash-circle me-2"></i>Bu yazı yönetici tarafından yayından kaldırıldı; yalnızca siz görebilirsiniz.</span>
+            }
+            else
+            {
+                <span><i class="bi bi-eye-slash me-2"></i>Bu yazı taslak; yalnızca siz görebilirsiniz.</span>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">Düzenle ve yayınla</a>
+            }
         </div>
     }
 

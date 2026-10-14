@@ -3,11 +3,11 @@
         <span><span class="brand-mark me-2" style="width:22px;height:22px;font-size:13px">i</span>Inkwell · © @DateTime.UtcNow.Year</span>
         <nav aria-label="Alt menü">
             <a asp-controller="Home" asp-action="Index">Yazılar</a>
-            @if (User.Identity?.IsAuthenticated ?? false)
+            @if (User.IsInRole(BlogApp.Data.Constants.RoleConstants.Admin) || User.IsInRole(BlogApp.Data.Constants.RoleConstants.Author))
             {
                 <a asp-controller="BlogPost" asp-action="Create">Yazı yaz</a>
             }
-            else
+            else if (!(User.Identity?.IsAuthenticated ?? false))
             {
                 <a asp-controller="Auth" asp-action="Register">Kayıt ol</a>
             }

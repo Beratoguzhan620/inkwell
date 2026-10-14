@@ -29,11 +29,18 @@ public class HomeController(IBlogPostService blogPostService, ICategoryService c
         });
     }
 
-    [HttpGet("/not-found")]
+    [Route("/not-found")]
     public IActionResult PageNotFound()
     {
         Response.StatusCode = StatusCodes.Status404NotFound;
         return View("NotFound");
+    }
+
+    [HttpGet("/access-denied")]
+    public IActionResult AccessDenied()
+    {
+        Response.StatusCode = StatusCodes.Status403Forbidden;
+        return View("AccessDenied");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
