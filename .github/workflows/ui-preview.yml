@@ -56,6 +56,17 @@ jobs:
           cat app.log
           exit 1
 
+      - name: Start admin panel
+        run: |
+          dotnet build BlogApp.Admin/BlogApp.Admin.csproj --configuration Release
+          ASPNETCORE_URLS="http://localhost:5081" SiteUrl="http://localhost:5080" nohup dotnet run --project BlogApp.Admin/BlogApp.Admin.csproj --configuration Release --no-build --no-launch-profile > admin.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -s -o /dev/null http://localhost:5081/login; then echo "Admin is up"; exit 0; fi
+            sleep 2
+          done
+          cat admin.log
+          exit 1
+
       - name: Install Playwright
         working-directory: tests/ui
         run: |
@@ -66,6 +77,7 @@ jobs:
         working-directory: tests/ui
         env:
           BASE_URL: http://localhost:5080
+          ADMIN_URL: http://localhost:5081
         run: |
           set -o pipefail
           mkdir -p output
@@ -79,6 +91,7 @@ jobs:
         run: |
           mkdir -p tests/ui/output
           cp app.log tests/ui/output/app.log 2>/dev/null || true
+          cp admin.log tests/ui/output/admin.log 2>/dev/null || true
           cd tests/ui/output
           git init -q
           git config user.name "github-actions[bot]"

@@ -21,10 +21,10 @@ Her aşama ayrı bir branch ve PR olarak yapılır (`stage/<no>-<kisa-ad>`). Bir
 - [x] Generic Repository TODO'su: ya uygulanır ya da gerekçesiyle kapatılır
 
 ## Aşama 3 — Admin paneli ve hesap akışları
-- [ ] `BlogApp.Admin`: dashboard, yazılar, kategoriler, kullanıcılar, yorum moderasyonu
-- [ ] Rol bazlı yetki (Admin / Author / Reader)
-- [ ] Şifre sıfırlama (`VerificationCode.PasswordReset`) uçtan uca
-- [ ] Doğrulama e-postası gerçekten gönderilir (TODO kapanır)
+- [x] `BlogApp.Admin`: dashboard, yazılar, kategoriler, kullanıcılar, yorum moderasyonu
+- [x] Rol bazlı yetki (Admin / Author / Reader)
+- [x] Şifre sıfırlama (`VerificationCode.PasswordReset`) uçtan uca
+- [x] Doğrulama e-postası gerçekten gönderilir (TODO kapanır)
 
 ## Aşama 4 — Test, yayın, README
 - [ ] Test projesi (AuthService, BlogPostService) + GitHub Actions
