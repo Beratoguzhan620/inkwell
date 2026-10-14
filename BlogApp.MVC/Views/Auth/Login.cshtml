@@ -22,9 +22,12 @@
                 <input class="form-control" asp-for="Password" autocomplete="current-password" />
                 <span asp-validation-for="Password"></span>
             </div>
-            <div class="form-check mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="form-check mb-0">
                 <input class="form-check-input" asp-for="RememberMe" />
                 <label class="form-check-label" asp-for="RememberMe"></label>
+            </div>
+            <a class="small" asp-controller="Auth" asp-action="ForgotPassword">Şifremi unuttum</a>
             </div>
             <button type="submit" class="btn btn-primary w-100">Giriş yap</button>
         </form>

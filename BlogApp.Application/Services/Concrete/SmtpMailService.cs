@@ -24,16 +24,21 @@ public class SmtpMailService : IMailService
 
         try
         {
-            var smtpClient = new SmtpClient(emailSettings.Server, emailSettings.Port)
+            using var smtpClient = new SmtpClient(emailSettings.Server, emailSettings.Port)
             {
                 Credentials = new NetworkCredential(emailSettings.Username, emailSettings.Password),
-                EnableSsl = true
+                EnableSsl = emailSettings.EnableSsl,
             };
 
+            var from = new MailAddress(
+                string.IsNullOrWhiteSpace(emailSettings.FromAddress) ? emailSettings.Username : emailSettings.FromAddress,
+                emailSettings.FromName);
 
-            var mailMessage = new MailMessage(emailSettings.Username, to, subject, body)
+            using var mailMessage = new MailMessage(from, new MailAddress(to))
             {
-                IsBodyHtml = true
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true,
             };
 
             await smtpClient.SendMailAsync(mailMessage);
@@ -42,7 +47,7 @@ public class SmtpMailService : IMailService
         }
         catch (Exception e)
         {
-            return Result.Fail($"Email gönderilirken bir hata oluştu: {e.Message}");
+            return Result.Fail($"E-posta gönderilemedi: {e.Message}");
         }
 
     }
