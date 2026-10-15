@@ -27,7 +27,8 @@ Her aşama ayrı bir branch ve PR olarak yapılır (`stage/<no>-<kisa-ad>`). Bir
 - [x] Doğrulama e-postası gerçekten gönderilir (TODO kapanır)
 
 ## Aşama 4 — Test, yayın, README
-- [ ] Test projesi (AuthService, BlogPostService) + GitHub Actions
-- [ ] Seed: 3 yazar, 20 yazı, kategoriler, yorumlar
-- [ ] Canlı demo + demo hesapları; ekran görüntüleri; README (TR + EN)
-- [ ] README'de "Proje geçmişi / Background" bölümü — TR: "Bu proje bir bootcamp projesi olarak başladı, sonra baştan geliştirildi." EN: "This project started as a bootcamp project and was later rebuilt from the ground up." Altına neyin yeniden yapıldığı kısaca maddelenir (tasarım, özellikler, testler, CI).
+- [x] Test projesi (AuthService, BlogPostService) + GitHub Actions
+- [x] Seed: 3 yazar, 20 yazı, kategoriler, yorumlar
+- [x] Demo hesapları; ekran görüntüleri; README (TR + EN)
+- [ ] Canlı demo — link README'ye
+- [x] README'de "Proje geçmişi / Background" bölümü — TR: "Bu proje bir bootcamp projesi olarak başladı, sonra baştan geliştirildi." EN: "This project started as a bootcamp project and was later rebuilt from the ground up." Altına neyin yeniden yapıldığı kısaca maddelenir (tasarım, özellikler, testler, CI).
