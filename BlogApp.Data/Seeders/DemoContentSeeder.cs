@@ -18,9 +18,14 @@ public static class DemoContentSeeder
         if (await context.BlogPosts.AnyAsync())
             return;
 
+        foreach (var name in ExtraCategories)
+        {
+            if (!await context.Categories.AnyAsync(c => c.Name == name))
+                context.Categories.Add(new Category { Name = name });
+        }
+        await context.SaveChangesAsync();
+
         var categories = await context.Categories.ToDictionaryAsync(c => c.Name, c => c.Id);
-        if (categories.Count == 0)
-            return;
 
         var authors = new[]
         {
@@ -47,7 +52,7 @@ public static class DemoContentSeeder
 
         await DbSeeder.SeedAdminAsync(context, "admin@example.com", DemoPassword, "Selin", "Kara");
 
-        var start = new DateTime(2026, 6, 2, 8, 30, 0, DateTimeKind.Utc);
+        var start = new DateTime(2026, 5, 4, 8, 30, 0, DateTimeKind.Utc);
         var posts = Posts.Select((p, i) => new BlogPost
         {
             Title = p.Title,
@@ -57,8 +62,8 @@ public static class DemoContentSeeder
             CategoryId = categories.TryGetValue(p.Category, out var id) ? id : categories.Values.First(),
             AuthorId = authors[p.Author].Id,
             Status = p.Draft ? BlogPostStatus.Draft : BlogPostStatus.Approved,
-            CreatedAt = start.AddDays(i * 6),
-            PublishedAt = p.Draft ? null : start.AddDays(i * 6).AddHours(2),
+            CreatedAt = start.AddDays(i * 7),
+            PublishedAt = p.Draft ? null : start.AddDays(i * 7).AddHours(2),
         }).ToList();
 
         context.BlogPosts.AddRange(posts);
@@ -72,6 +77,14 @@ public static class DemoContentSeeder
             (2, 1, "Grafik çok net anlatmış, teşekkürler."),
             (4, 0, "Erişilebilirlik kontrol listesini ekibimizle paylaştım."),
             (4, 2, "Klavye ile gezinme maddesi en çok atlanan kısım bence."),
+            (6, 2, "Yüksek sesle düşünme kısmı çok doğru, ben de aynı geri bildirimi almıştım."),
+            (7, 1, "Kontrast eklentisini tasarım ekibimize önerdim."),
+            (8, 0, "Commit mesajı örneği tam aradığım şeydi."),
+            (10, 2, "Etiket fikrini bu hafta ekipte deniyoruz."),
+            (12, 2, ".dockerignore'u unutmuşuz, imaj boyutu bir anda yarıya indi."),
+            (14, 1, "Gün sonu notu alışkanlığını ben de edindim, sabahları çok işe yarıyor."),
+            (16, 0, "SQLite ile test fikri güzel; bizde de mock'lar gerçek hatayı gizliyordu."),
+            (19, 2, "İlk haftamda bu yazıyı okumuş olmayı isterdim."),
         };
 
         context.Comments.AddRange(comments.Select((c, i) => new Comment
@@ -84,6 +97,8 @@ public static class DemoContentSeeder
 
         await context.SaveChangesAsync();
     }
+
+    private static readonly string[] ExtraCategories = ["Kariyer", "Tasarım"];
 
     private static User CreateUser(string firstName, string lastName, string email)
     {
@@ -255,6 +270,314 @@ public static class DemoContentSeeder
             - Antibiyotiği yalnızca hekim önerdiğinde kullanmak.
             - Önerilen süreyi tamamlamak.
             - Viral enfeksiyonlarda (grip, soğuk algınlığı) antibiyotik beklememek.
+            """),
+        new(
+            "İlk teknik mülakatımdan öğrendiklerim",
+            "ilk-teknik-mulakatimdan-ogrendiklerim",
+            "Kariyer",
+            1,
+            "Soruyu hemen çözmeye çalışmak yerine yüksek sesle düşünmek, doğru cevabı bulmaktan daha çok puan getirdi.",
+            """
+            Soruyu hemen çözmeye çalışmak yerine yüksek sesle düşünmek, doğru cevabı bulmaktan daha çok puan getirdi.
+
+            ## Soruyu netleştirin
+
+            İlk beş dakikayı sınır durumlarını sormaya ayırdım: boş liste gelebilir mi, sayılar negatif olabilir mi, girdi ne kadar büyük? Mülakatçı bu soruların çoğunu bekliyordu.
+
+            ## Önce basit çözüm
+
+            Kaba kuvvet çözümü yazıp karmaşıklığını söyledim, sonra iyileştirdim. Hiç çalışan kod yazmadan en iyi çözümü aramak, süre bitince elinizde hiçbir şey bırakmıyor.
+
+            ## Takıldığınızda
+
+            "Burada takıldım, şunu deniyorum" demek sessiz kalmaktan iyidir. Mülakat, birlikte çalışmanın küçük bir provası.
+            """),
+        new(
+            "Renk seçerken kontrast oranını unutmayın",
+            "renk-secerken-kontrast-oranini-unutmayin",
+            "Tasarım",
+            0,
+            "Açık gri metin şık görünür ama güneşte telefon ekranında okunmaz. WCAG'in 4,5:1 oranı keyfi bir sayı değil.",
+            """
+            Açık gri metin şık görünür ama güneşte telefon ekranında okunmaz. WCAG'in 4,5:1 oranı keyfi bir sayı değil.
+
+            ## Oran ne demek?
+
+            Kontrast oranı, metin ve arka plan rengi arasındaki parlaklık farkıdır. Normal metin için en az **4,5:1**, büyük başlıklar için **3:1** önerilir.
+
+            ## Pratik öneriler
+
+            - Tasarım araçlarındaki kontrast eklentileriyle her renk çiftini kontrol edin.
+            - İkincil metni gri yapmak yerine biraz küçültmek çoğu zaman yeterli.
+            - Butonların devre dışı hali bile okunabilir olmalı.
+
+            Kontrastı yüksek bir arayüz yalnızca görme sorunu olanlar için değil, herkes için daha rahat okunur.
+            """),
+        new(
+            "Git geçmişini temiz tutmanın üç basit kuralı",
+            "git-gecmisini-temiz-tutmanin-uc-basit-kurali",
+            "Yazılım",
+            2,
+            "Altı ay sonra bir hatanın nereden geldiğini ararken iyi yazılmış commit mesajları en büyük yardımcınız olur.",
+            """
+            Altı ay sonra bir hatanın nereden geldiğini ararken iyi yazılmış commit mesajları en büyük yardımcınız olur.
+
+            ## 1. Bir commit, bir değişiklik
+
+            Biçimlendirme düzeltmesi ile yeni özelliği aynı commit'e koymayın. `git bisect` ancak commit'ler küçükse işe yarar.
+
+            ## 2. Mesaj "ne"yi değil "neden"i anlatsın
+
+            Kod zaten ne değiştiğini gösteriyor. Mesaj, değişikliğin nedenini anlatmalı:
+
+            ```text
+            fix(cart): keep the coupon when the quantity changes
+
+            The coupon was cleared on every cart update, so customers had to enter it again.
+            ```
+
+            ## 3. Paylaşılmış geçmişi yeniden yazmayın
+
+            Kendi branch'inizde istediğiniz kadar düzenleyin; `main`'e girdikten sonra geçmiş sabittir.
+            """),
+        new(
+            "Elektrikli araç bataryaları soğukta neden zorlanır?",
+            "elektrikli-arac-bataryalari-sogukta-neden-zorlanir",
+            "Bilim",
+            2,
+            "Kışın menzilin yüzde yirmi ile otuz arasında düşmesi normaldir. Sebep, lityum iyonlarının soğukta yavaşlaması ve ısıtmanın enerji tüketmesi.",
+            """
+            Kışın menzilin yüzde yirmi ile otuz arasında düşmesi normaldir. Sebep, lityum iyonlarının soğukta yavaşlaması ve ısıtmanın enerji tüketmesi.
+
+            ## Kimya tarafı
+
+            Batarya içindeki elektrolit soğukta koyulaşır. İyonlar elektrotlar arasında daha yavaş hareket eder, iç direnç artar ve kullanılabilir enerji azalır.
+
+            ## Isıtma tarafı
+
+            Benzinli araçlar motorun atık ısısıyla kabini ısıtır. Elektrikli araçta bu ısı yoktur; ısıtma doğrudan bataryadan beslenir.
+
+            ## Ne yapılabilir?
+
+            - Aracı şarjdayken önceden ısıtmak.
+            - Kabin yerine koltuk ve direksiyon ısıtmasını kullanmak.
+            - Isı pompalı modelleri tercih etmek.
+            """),
+        new(
+            "Kod incelemesinde nazik ama net olmak",
+            "kod-incelemesinde-nazik-ama-net-olmak",
+            "Kariyer",
+            0,
+            "\"Bu yanlış\" yerine \"Bu durumda liste boş gelirse ne olur?\" demek hem hatayı gösterir hem de kişiyi savunmaya geçirmez.",
+            """
+            "Bu yanlış" yerine "Bu durumda liste boş gelirse ne olur?" demek hem hatayı gösterir hem de kişiyi savunmaya geçirmez.
+
+            ## Yorumları etiketleyin
+
+            Ekibimizde yorumların başına kısa etiketler koyuyoruz:
+
+            - **engel:** birleşmeden önce düzeltilmeli.
+            - **öneri:** yazarın kararına kalmış.
+            - **soru:** anlamak için soruyorum.
+
+            Bu küçük alışkanlık, hangi yorumun gerçekten önemli olduğunu tartışmayı bitirdi.
+
+            ## Övgüyü de yazın
+
+            İyi bir çözüm gördüğünüzde bunu söylemek, sadece hataları yazmaktan çok daha fazla şey öğretir.
+            """),
+        new(
+            "Boş durum ekranları neden önemli?",
+            "bos-durum-ekranlari-neden-onemli",
+            "Tasarım",
+            1,
+            "Kullanıcı bir listeyi ilk açtığında çoğu zaman hiçbir şey görmez. O ekran, ürünün ne işe yaradığını anlatmak için en iyi fırsattır.",
+            """
+            Kullanıcı bir listeyi ilk açtığında çoğu zaman hiçbir şey görmez. O ekran, ürünün ne işe yaradığını anlatmak için en iyi fırsattır.
+
+            ## İyi bir boş durumun üç parçası
+
+            1. **Ne olduğunu söyleyin:** "Henüz yazınız yok."
+            2. **Neden önemli olduğunu anlatın:** "Yazılarınız burada, en yenisi üstte listelenir."
+            3. **Tek bir eylem önerin:** "İlk yazınızı yazın."
+
+            ## Arama sonucu boşsa
+
+            Boş arama sonucu farklıdır: kullanıcı bir şey arıyor ve bulamıyor. Filtreleri temizleme bağlantısı ve yazım önerisi burada daha işe yarar.
+            """),
+        new(
+            "Docker imajlarını küçültmenin yolları",
+            "docker-imajlarini-kucultmenin-yollari",
+            "Yazılım",
+            1,
+            "1,2 GB'lık imajı çok aşamalı derlemeyle 220 MB'a indirdik. Hem dağıtım hızlandı hem de güvenlik taramasındaki bulgular azaldı.",
+            """
+            1,2 GB'lık imajı çok aşamalı derlemeyle 220 MB'a indirdik. Hem dağıtım hızlandı hem de güvenlik taramasındaki bulgular azaldı.
+
+            ## Çok aşamalı derleme
+
+            SDK yalnızca derleme aşamasında gerekir. Çalışma aşamasında sadece runtime imajı ve yayınlanan dosyalar kalır:
+
+            ```dockerfile
+            FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+            WORKDIR /src
+            COPY . .
+            RUN dotnet publish -c Release -o /app
+
+            FROM mcr.microsoft.com/dotnet/aspnet:10.0
+            COPY --from=build /app .
+            ENTRYPOINT ["dotnet", "App.dll"]
+            ```
+
+            ## .dockerignore
+
+            `bin`, `obj` ve `.git` klasörlerini dışarıda bırakmak derleme bağlamını küçültür ve önbelleğin daha sık işe yaramasını sağlar.
+            """),
+        new(
+            "Uyku ve hafıza: Beyin gece ne yapıyor?",
+            "uyku-ve-hafiza-beyin-gece-ne-yapiyor",
+            "Bilim",
+            2,
+            "Gün içinde öğrendiklerimiz uykuda yeniden oynatılıyor ve kalıcı hafızaya aktarılıyor. Sınavdan önceki gece uykusuz kalmak bu yüzden ters tepiyor.",
+            """
+            Gün içinde öğrendiklerimiz uykuda yeniden oynatılıyor ve kalıcı hafızaya aktarılıyor. Sınavdan önceki gece uykusuz kalmak bu yüzden ters tepiyor.
+
+            ## Derin uyku
+
+            Derin uyku evresinde hipokampüs, gün içindeki deneyimleri tekrar tekrar "oynatır". Bu sırada bilgiler beyin kabuğuna aktarılır.
+
+            ## REM uykusu
+
+            REM evresi, farklı bilgiler arasında bağlantı kurmakla ilişkilendiriliyor. Bir problemin çözümünün sabah aklınıza gelmesi tesadüf olmayabilir.
+
+            ## Pratikte
+
+            Düzenli uyku saati, ekransız son bir saat ve öğrendiklerinizi uyumadan önce kısaca gözden geçirmek fark yaratır.
+            """),
+        new(
+            "Uzaktan çalışırken odaklanmayı korumak",
+            "uzaktan-calisirken-odaklanmayi-korumak",
+            "Kariyer",
+            0,
+            "Bildirimleri kapatmak tek başına yetmedi. Asıl fark, takvimde odak bloklarını toplantı gibi korumakla geldi.",
+            """
+            Bildirimleri kapatmak tek başına yetmedi. Asıl fark, takvimde odak bloklarını toplantı gibi korumakla geldi.
+
+            ## Odak blokları
+
+            Her sabah iki saatlik bir bloğu takvimde "meşgul" olarak işaretliyorum. Bu sürede mesajlara bakmıyorum; acil bir durum varsa telefonla aranabileceğimi ekip biliyor.
+
+            ## Yazılı iletişim
+
+            Soruyu tek mesajda, bağlamıyla birlikte yazmak karşı tarafın da odağını korur. "Müsait misin?" diye başlayan mesajlar iki kişinin de zamanını alır.
+
+            ## Gün sonu notu
+
+            Günü bitirirken yarın ilk yapacağım işi yazıyorum. Sabah nereden başlayacağımı düşünmek zorunda kalmıyorum.
+            """),
+        new(
+            "Tipografide satır uzunluğu",
+            "tipografide-satir-uzunlugu",
+            "Tasarım",
+            1,
+            "Geniş ekranda tüm genişliğe yayılan metin okunmaz. Satır başına 60 ile 75 karakter, gözün satır sonundan yeni satıra rahatça dönmesini sağlar.",
+            """
+            Geniş ekranda tüm genişliğe yayılan metin okunmaz. Satır başına 60 ile 75 karakter, gözün satır sonundan yeni satıra rahatça dönmesini sağlar.
+
+            ## CSS ile sınırlamak
+
+            ```css
+            .article {
+              max-width: 68ch;
+              line-height: 1.7;
+            }
+            ```
+
+            `ch` birimi, yazı tipindeki "0" karakterinin genişliğidir; satır uzunluğunu karakter sayısıyla düşünmeyi kolaylaştırır.
+
+            ## Satır aralığı
+
+            Uzun satırlar daha geniş satır aralığı ister. Gövde metni için 1,5 ile 1,7 arası çoğu yazı tipinde iyi sonuç verir.
+            """),
+        new(
+            "Testleri hızlı tutmak için veritabanını taklit etmeyin",
+            "testleri-hizli-tutmak-icin-veritabanini-taklit-etmeyin",
+            "Yazılım",
+            2,
+            "Sahte repository'lerle yazdığımız testler geçiyordu ama üretimde benzersiz index hatası alıyorduk. Bellek içi SQLite ile gerçek SQL çalıştırmak bu açığı kapattı.",
+            """
+            Sahte repository'lerle yazdığımız testler geçiyordu ama üretimde benzersiz index hatası alıyorduk. Bellek içi SQLite ile gerçek SQL çalıştırmak bu açığı kapattı.
+
+            ## Sahte nesnelerin sınırı
+
+            Mock, yalnızca sizin beklediğiniz davranışı taklit eder. Benzersiz index, yabancı anahtar ve sorgu çevirisi gibi veritabanı kuralları testte hiç çalışmaz.
+
+            ## Bellek içi SQLite
+
+            Her test için açılan bir SQLite bağlantısı milisaniyeler içinde hazır olur ve EF Core sorgularını gerçekten SQL'e çevirir. Testler hâlâ hızlı, ama artık gerçeğe çok daha yakın.
+
+            ## Ne zaman yetmez?
+
+            SQL Server'a özgü özellikler (ör. tam metin arama) için gerçek bir veritabanıyla çalışan birkaç entegrasyon testi yine gerekli.
+            """),
+        new(
+            "Okyanuslar neden tuzlu?",
+            "okyanuslar-neden-tuzlu",
+            "Bilim",
+            2,
+            "Yağmur suyu kayalardaki mineralleri çözerek denize taşır. Su buharlaşır, tuz kalır; milyonlarca yılda okyanuslar bugünkü tuzluluğa ulaşır.",
+            """
+            Yağmur suyu kayalardaki mineralleri çözerek denize taşır. Su buharlaşır, tuz kalır; milyonlarca yılda okyanuslar bugünkü tuzluluğa ulaşır.
+
+            ## Tuzun kaynağı
+
+            Yağmur, havadaki karbondioksitle hafifçe asidik hale gelir ve kayaları aşındırır. Açığa çıkan sodyum ve diğer iyonlar nehirlerle denize ulaşır. Klor ise büyük ölçüde deniz tabanındaki volkanik faaliyetlerden gelir.
+
+            ## Neden giderek tuzlanmıyor?
+
+            Tuz girişi kadar çıkışı da var: bazı mineraller deniz tabanında çökelir, bazıları canlıların kabuklarına bağlanır. Bu denge sayesinde okyanusların tuzluluğu uzun süredir yaklaşık yüzde 3,5'te sabit.
+            """),
+        new(
+            "Telefonunuzun pil ömrünü uzatan ayarlar",
+            "telefonunuzun-pil-omrunu-uzatan-ayarlar",
+            "Teknoloji",
+            1,
+            "Pil sağlığını en çok yüksek sıcaklık ve sürekli yüzde yüze şarj etmek yıpratır. İki ayar, bataryanın birkaç yıl daha dayanmasını sağlayabilir.",
+            """
+            Pil sağlığını en çok yüksek sıcaklık ve sürekli yüzde yüze şarj etmek yıpratır. İki ayar, bataryanın birkaç yıl daha dayanmasını sağlayabilir.
+
+            ## Optimize şarj
+
+            Çoğu telefonda "optimize edilmiş şarj" veya "şarjı yüzde 80'de durdur" seçeneği var. Gece boyunca yüzde yüzde beklemek yerine, kalkmanıza yakın şarjı tamamlar.
+
+            ## Sıcaktan uzak tutun
+
+            Şarj olurken oyun oynamak veya telefonu güneşte bırakmak bataryayı ısıtır. Kalın kılıflar da şarj sırasında ısıyı hapseder.
+
+            ## Asıl tüketen ne?
+
+            Ayarlar menüsündeki pil kullanımı listesi, arka planda en çok çalışan uygulamaları gösterir. Genellikle tek bir uygulama günün yarısını tüketir.
+            """),
+        new(
+            "Yeni bir kod tabanını okumaya nereden başlamalı?",
+            "yeni-bir-kod-tabanini-okumaya-nereden-baslamali",
+            "Kariyer",
+            0,
+            "İlk hafta her dosyayı okumaya çalıştım ve hiçbir şey aklımda kalmadı. Tek bir isteği baştan sona izlemek çok daha iyi sonuç verdi.",
+            """
+            İlk hafta her dosyayı okumaya çalıştım ve hiçbir şey aklımda kalmadı. Tek bir isteği baştan sona izlemek çok daha iyi sonuç verdi.
+
+            ## Bir isteği takip edin
+
+            Uygulamadaki basit bir sayfayı seçin ve tarayıcıdan veritabanına kadar izleyin: hangi controller, hangi servis, hangi sorgu? Bu yol, mimarinin özetini verir.
+
+            ## Testleri okuyun
+
+            Testler, kodun nasıl kullanılması gerektiğini gösteren en güncel belgedir.
+
+            ## Not alın ve paylaşın
+
+            Anlamakta zorlandığınız yerleri yazın. Bir sonraki yeni ekip arkadaşı için en değerli belge, sizin ilk haftanızın notları olabilir.
             """),
         new(
             "Not alma uygulamamı neden üç kez değiştirdim",
