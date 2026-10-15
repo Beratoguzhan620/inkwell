@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Build and test
     runs-on: ubuntu-latest
 
     steps:
@@ -23,6 +23,9 @@ jobs:
 
       - name: Build
         run: dotnet build BlogApp.slnx --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test tests/BlogApp.Application.Tests/BlogApp.Application.Tests.csproj --no-build --configuration Release --logger "console;verbosity=normal"
 
       - name: Check for model changes without a migration
         run: |
