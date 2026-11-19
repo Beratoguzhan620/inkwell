@@ -26,7 +26,11 @@ if (!app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await dbContext.Database.MigrateAsync();
+    // The migrations are written for SQL Server; on SQLite (the public demo) the schema comes from the model.
+    if (dbContext.Database.IsSqlite())
+        await dbContext.Database.EnsureCreatedAsync();
+    else
+        await dbContext.Database.MigrateAsync();
     await DbSeeder.SeedAsync(dbContext);
     await DbSeeder.SeedAdminAsync(dbContext, app.Configuration["Admin:Email"], app.Configuration["Admin:Password"]);
 

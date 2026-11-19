@@ -34,6 +34,10 @@ if (!app.Environment.IsDevelopment())
 }
 
 // The database schema is owned and migrated by BlogApp.MVC; the admin panel only reads and writes data.
+// PathBase serves the panel under a sub-path, as the one-container demo does (/admin).
+if (app.Configuration["PathBase"] is { Length: > 0 } pathBase)
+    app.UsePathBase(pathBase);
+
 app.UseStatusCodePagesWithReExecute("/not-found");
 app.UseHttpsRedirection();
 app.UseRouting();
