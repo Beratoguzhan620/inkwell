@@ -12,6 +12,8 @@ A multi-author blog: write in Markdown, keep drafts, publish with a readable URL
 
 ## Demo accounts
 
+**Live demo:** [inkwell-demo-9upx.onrender.com](https://inkwell-demo-9upx.onrender.com). The admin panel is at [/admin](https://inkwell-demo-9upx.onrender.com/admin/). Sign in with the accounts below; e-mail is not set up there, so a new account cannot verify its address. It runs on a free server with SQLite inside the container, so every restart starts again from the same data; after a quiet spell the first visit can take about a minute.
+
 Start the site with demo content (see [Running locally](#running-locally)) and sign in with:
 
 | Role | E-mail | Password | Where |

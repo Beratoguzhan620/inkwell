@@ -12,6 +12,8 @@
 
 ## Demo hesapları
 
+**Canlı demo:** [inkwell-demo-9upx.onrender.com](https://inkwell-demo-9upx.onrender.com). Yönetim paneli [/admin](https://inkwell-demo-9upx.onrender.com/admin/) adresinde. Aşağıdaki hesaplarla giriş yapabilirsin; orada e-posta kurulu değil, bu yüzden yeni açılan bir hesap adresini doğrulayamaz. Ücretsiz bir sunucuda, veritabanı konteynerin içinde SQLite olarak çalışıyor; her yeniden başlatmada aynı verilerle baştan açılır. Bir süre kimse açmadıysa ilk açılış bir dakika kadar sürebilir.
+
 Siteyi demo içerikle başlatın ([Yerelde çalıştırma](#yerelde-çalıştırma)) ve şu hesaplarla giriş yapın:
 
 | Rol | E-posta | Şifre | Nerede |
