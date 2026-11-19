@@ -1,0 +1,415 @@
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:5081
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /home/runner/work/inkwell/inkwell/BlogApp.Admin
+warn: Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3]
+      Failed to determine the https port for redirect.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (25ms) [Parameters=[@Trim='?' (Size = 100)], CommandType='Text', CommandTimeout='30']
+      SELECT [u1].[Id], [u1].[Email], [u1].[FirstName], [u1].[IsActive], [u1].[IsEmailVerified], [u1].[LastName], [u1].[PasswordHash], [u1].[PasswordSalt], [s].[Id], [s].[RoleId], [s].[UserId], [s].[Id0], [s].[Name]
+      FROM (
+          SELECT TOP(1) [u].[Id], [u].[Email], [u].[FirstName], [u].[IsActive], [u].[IsEmailVerified], [u].[LastName], [u].[PasswordHash], [u].[PasswordSalt]
+          FROM [Users] AS [u]
+          WHERE [u].[Email] = @Trim
+      ) AS [u1]
+      LEFT JOIN (
+          SELECT [u0].[Id], [u0].[RoleId], [u0].[UserId], [r].[Id] AS [Id0], [r].[Name]
+          FROM [UserRoles] AS [u0]
+          INNER JOIN [Roles] AS [r] ON [u0].[RoleId] = [r].[Id]
+      ) AS [s] ON [u1].[Id] = [s].[UserId]
+      ORDER BY [u1].[Id], [s].[Id]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [BlogPosts] AS [b]
+      WHERE [b].[Status] = 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [BlogPosts] AS [b]
+      WHERE [b].[Status] = 3
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [BlogPosts] AS [b]
+      WHERE [b].[Status] = 2
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [Users] AS [u]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [UserRoles] AS [u]
+      WHERE [u].[RoleId] = 2
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[@weekAgo='?' (DbType = DateTime2)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [Comments] AS [c]
+      WHERE [c].[CreatedAt] >= @weekAgo
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[@p='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT [b0].[Id], [b0].[Title], [b0].[Slug], [u].[FirstName] + N' ' + [u].[LastName] AS [AuthorName], [c].[Name] AS [CategoryName], [b0].[Status], (
+          SELECT COUNT(*)
+          FROM [Comments] AS [c0]
+          WHERE [b0].[Id] = [c0].[PostId]) AS [CommentCount], [b0].[CreatedAt], [b0].[PublishedAt]
+      FROM (
+          SELECT TOP(@p) [b].[Id], [b].[AuthorId], [b].[CategoryId], [b].[CreatedAt], [b].[PublishedAt], [b].[Slug], [b].[Status], [b].[Title]
+          FROM [BlogPosts] AS [b]
+          ORDER BY [b].[CreatedAt] DESC
+      ) AS [b0]
+      INNER JOIN [Users] AS [u] ON [b0].[AuthorId] = [u].[Id]
+      INNER JOIN [Categories] AS [c] ON [b0].[CategoryId] = [c].[Id]
+      ORDER BY [b0].[CreatedAt] DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[@p='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT [c0].[Id], [c0].[PostId], [b].[Title] AS [PostTitle], [b].[Slug] AS [PostSlug], [u].[FirstName] + N' ' + [u].[LastName] AS [UserName], [c0].[Content], [c0].[CreatedAt]
+      FROM (
+          SELECT TOP(@p) [c].[Id], [c].[Content], [c].[CreatedAt], [c].[PostId], [c].[UserId]
+          FROM [Comments] AS [c]
+          ORDER BY [c].[CreatedAt] DESC
+      ) AS [c0]
+      INNER JOIN [BlogPosts] AS [b] ON [c0].[PostId] = [b].[Id]
+      INNER JOIN [Users] AS [u] ON [c0].[UserId] = [u].[Id]
+      ORDER BY [c0].[CreatedAt] DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [c].[Id], [c].[Name], (
+          SELECT COUNT(*)
+          FROM [BlogPosts] AS [b]
+          WHERE [c].[Id] = [b].[CategoryId] AND [b].[Status] = 1) AS [PostCount]
+      FROM [Categories] AS [c]
+      ORDER BY [c].[Name]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [BlogPosts] AS [b]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT [b0].[Id], [b0].[Title], [b0].[Slug], [u].[FirstName] + N' ' + [u].[LastName] AS [AuthorName], [c].[Name] AS [CategoryName], [b0].[Status], (
+          SELECT COUNT(*)
+          FROM [Comments] AS [c0]
+          WHERE [b0].[Id] = [c0].[PostId]) AS [CommentCount], [b0].[CreatedAt], [b0].[PublishedAt]
+      FROM (
+          SELECT [b].[Id], [b].[AuthorId], [b].[CategoryId], [b].[CreatedAt], [b].[PublishedAt], [b].[Slug], [b].[Status], [b].[Title]
+          FROM [BlogPosts] AS [b]
+          ORDER BY [b].[CreatedAt] DESC, [b].[Id] DESC
+          OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+      ) AS [b0]
+      INNER JOIN [Users] AS [u] ON [b0].[AuthorId] = [u].[Id]
+      INNER JOIN [Categories] AS [c] ON [b0].[CategoryId] = [c].[Id]
+      ORDER BY [b0].[CreatedAt] DESC, [b0].[Id] DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [Users] AS [u]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (7ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT [u].[Id], [u].[FirstName] + N' ' + [u].[LastName] AS [FullName], [u].[Email], COALESCE((
+          SELECT TOP(1) [r].[Name]
+          FROM [UserRoles] AS [u0]
+          INNER JOIN [Roles] AS [r] ON [u0].[RoleId] = [r].[Id]
+          WHERE [u].[Id] = [u0].[UserId]
+          ORDER BY [u0].[RoleId]), N'') AS [Role], [u].[IsActive], [u].[IsEmailVerified], (
+          SELECT COUNT(*)
+          FROM [BlogPosts] AS [b]
+          WHERE [u].[Id] = [b].[AuthorId]) AS [PostCount]
+      FROM [Users] AS [u]
+      ORDER BY [u].[FirstName], [u].[LastName]
+      OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [Comments] AS [c]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT [c0].[Id], [c0].[PostId], [b].[Title] AS [PostTitle], [b].[Slug] AS [PostSlug], [u].[FirstName] + N' ' + [u].[LastName] AS [UserName], [c0].[Content], [c0].[CreatedAt]
+      FROM (
+          SELECT [c].[Id], [c].[Content], [c].[CreatedAt], [c].[PostId], [c].[UserId]
+          FROM [Comments] AS [c]
+          ORDER BY [c].[CreatedAt] DESC
+          OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+      ) AS [c0]
+      INNER JOIN [BlogPosts] AS [b] ON [c0].[PostId] = [b].[Id]
+      INNER JOIN [Users] AS [u] ON [c0].[UserId] = [u].[Id]
+      ORDER BY [c0].[CreatedAt] DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [c].[Id], [c].[Name], (
+          SELECT COUNT(*)
+          FROM [BlogPosts] AS [b]
+          WHERE [c].[Id] = [b].[CategoryId] AND [b].[Status] = 1) AS [PostCount]
+      FROM [Categories] AS [c]
+      ORDER BY [c].[Name]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [c].[Id], [c].[Name], (
+          SELECT COUNT(*)
+          FROM [BlogPosts] AS [b]
+          WHERE [c].[Id] = [b].[CategoryId] AND [b].[Status] = 1) AS [PostCount]
+      FROM [Categories] AS [c]
+      ORDER BY [c].[Name]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[@term_contains='?' (Size = 200), @term_contains0='?' (Size = 4000)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [BlogPosts] AS [b]
+      INNER JOIN [Users] AS [u] ON [b].[AuthorId] = [u].[Id]
+      WHERE [b].[Title] LIKE @term_contains ESCAPE N'\' OR [u].[FirstName] + N' ' + [u].[LastName] LIKE @term_contains0 ESCAPE N'\'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[@term_contains='?' (Size = 200), @term_contains0='?' (Size = 4000), @p='?' (DbType = Int32), @p3='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT [s].[Id], [s].[Title], [s].[Slug], [s].[FirstName] + N' ' + [s].[LastName] AS [AuthorName], [c].[Name] AS [CategoryName], [s].[Status], (
+          SELECT COUNT(*)
+          FROM [Comments] AS [c0]
+          WHERE [s].[Id] = [c0].[PostId]) AS [CommentCount], [s].[CreatedAt], [s].[PublishedAt]
+      FROM (
+          SELECT [b].[Id], [b].[CategoryId], [b].[CreatedAt], [b].[PublishedAt], [b].[Slug], [b].[Status], [b].[Title], [u].[FirstName], [u].[LastName]
+          FROM [BlogPosts] AS [b]
+          INNER JOIN [Users] AS [u] ON [b].[AuthorId] = [u].[Id]
+          WHERE [b].[Title] LIKE @term_contains ESCAPE N'\' OR [u].[FirstName] + N' ' + [u].[LastName] LIKE @term_contains0 ESCAPE N'\'
+          ORDER BY [b].[CreatedAt] DESC, [b].[Id] DESC
+          OFFSET @p ROWS FETCH NEXT @p3 ROWS ONLY
+      ) AS [s]
+      INNER JOIN [Categories] AS [c] ON [s].[CategoryId] = [c].[Id]
+      ORDER BY [s].[CreatedAt] DESC, [s].[Id] DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@postId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [b].[Id], [b].[AuthorId], [b].[CategoryId], [b].[Content], [b].[CoverImageUrl], [b].[CreatedAt], [b].[Excerpt], [b].[PublishedAt], [b].[Slug], [b].[Status], [b].[Title], [b].[UpdatedAt]
+      FROM [BlogPosts] AS [b]
+      WHERE [b].[Id] = @postId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SET IMPLICIT_TRANSACTIONS OFF;
+      SET NOCOUNT ON;
+      UPDATE [BlogPosts] SET [Status] = @p0
+      OUTPUT 1
+      WHERE [Id] = @p1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [c].[Id], [c].[Name], (
+          SELECT COUNT(*)
+          FROM [BlogPosts] AS [b]
+          WHERE [c].[Id] = [b].[CategoryId] AND [b].[Status] = 1) AS [PostCount]
+      FROM [Categories] AS [c]
+      ORDER BY [c].[Name]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@term_contains='?' (Size = 200), @term_contains0='?' (Size = 4000)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [BlogPosts] AS [b]
+      INNER JOIN [Users] AS [u] ON [b].[AuthorId] = [u].[Id]
+      WHERE [b].[Title] LIKE @term_contains ESCAPE N'\' OR [u].[FirstName] + N' ' + [u].[LastName] LIKE @term_contains0 ESCAPE N'\'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@term_contains='?' (Size = 200), @term_contains0='?' (Size = 4000), @p='?' (DbType = Int32), @p3='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT [s].[Id], [s].[Title], [s].[Slug], [s].[FirstName] + N' ' + [s].[LastName] AS [AuthorName], [c].[Name] AS [CategoryName], [s].[Status], (
+          SELECT COUNT(*)
+          FROM [Comments] AS [c0]
+          WHERE [s].[Id] = [c0].[PostId]) AS [CommentCount], [s].[CreatedAt], [s].[PublishedAt]
+      FROM (
+          SELECT [b].[Id], [b].[CategoryId], [b].[CreatedAt], [b].[PublishedAt], [b].[Slug], [b].[Status], [b].[Title], [u].[FirstName], [u].[LastName]
+          FROM [BlogPosts] AS [b]
+          INNER JOIN [Users] AS [u] ON [b].[AuthorId] = [u].[Id]
+          WHERE [b].[Title] LIKE @term_contains ESCAPE N'\' OR [u].[FirstName] + N' ' + [u].[LastName] LIKE @term_contains0 ESCAPE N'\'
+          ORDER BY [b].[CreatedAt] DESC, [b].[Id] DESC
+          OFFSET @p ROWS FETCH NEXT @p3 ROWS ONLY
+      ) AS [s]
+      INNER JOIN [Categories] AS [c] ON [s].[CategoryId] = [c].[Id]
+      ORDER BY [s].[CreatedAt] DESC, [s].[Id] DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@term_contains='?' (Size = 4000), @term_contains0='?' (Size = 100)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [Users] AS [u]
+      WHERE [u].[FirstName] + N' ' + [u].[LastName] LIKE @term_contains ESCAPE N'\' OR [u].[Email] LIKE @term_contains0 ESCAPE N'\'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[@term_contains='?' (Size = 4000), @term_contains0='?' (Size = 100), @p='?' (DbType = Int32), @p3='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT [u].[Id], [u].[FirstName] + N' ' + [u].[LastName] AS [FullName], [u].[Email], COALESCE((
+          SELECT TOP(1) [r].[Name]
+          FROM [UserRoles] AS [u0]
+          INNER JOIN [Roles] AS [r] ON [u0].[RoleId] = [r].[Id]
+          WHERE [u].[Id] = [u0].[UserId]
+          ORDER BY [u0].[RoleId]), N'') AS [Role], [u].[IsActive], [u].[IsEmailVerified], (
+          SELECT COUNT(*)
+          FROM [BlogPosts] AS [b]
+          WHERE [u].[Id] = [b].[AuthorId]) AS [PostCount]
+      FROM [Users] AS [u]
+      WHERE [u].[FirstName] + N' ' + [u].[LastName] LIKE @term_contains ESCAPE N'\' OR [u].[Email] LIKE @term_contains0 ESCAPE N'\'
+      ORDER BY [u].[FirstName], [u].[LastName]
+      OFFSET @p ROWS FETCH NEXT @p3 ROWS ONLY
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@userId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT [u1].[Id], [u1].[Email], [u1].[FirstName], [u1].[IsActive], [u1].[IsEmailVerified], [u1].[LastName], [u1].[PasswordHash], [u1].[PasswordSalt], [u0].[Id], [u0].[RoleId], [u0].[UserId]
+      FROM (
+          SELECT TOP(1) [u].[Id], [u].[Email], [u].[FirstName], [u].[IsActive], [u].[IsEmailVerified], [u].[LastName], [u].[PasswordHash], [u].[PasswordSalt]
+          FROM [Users] AS [u]
+          WHERE [u].[Id] = @userId
+      ) AS [u1]
+      LEFT JOIN [UserRoles] AS [u0] ON [u1].[Id] = [u0].[UserId]
+      ORDER BY [u1].[Id]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[@p0='?' (DbType = Int32), @p1='?' (DbType = Int32), @p2='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SET NOCOUNT ON;
+      DELETE FROM [UserRoles]
+      OUTPUT 1
+      WHERE [Id] = @p0;
+      INSERT INTO [UserRoles] ([RoleId], [UserId])
+      OUTPUT INSERTED.[Id]
+      VALUES (@p1, @p2);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@term_contains='?' (Size = 4000), @term_contains0='?' (Size = 100)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [Users] AS [u]
+      WHERE [u].[FirstName] + N' ' + [u].[LastName] LIKE @term_contains ESCAPE N'\' OR [u].[Email] LIKE @term_contains0 ESCAPE N'\'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@term_contains='?' (Size = 4000), @term_contains0='?' (Size = 100), @p='?' (DbType = Int32), @p3='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT [u].[Id], [u].[FirstName] + N' ' + [u].[LastName] AS [FullName], [u].[Email], COALESCE((
+          SELECT TOP(1) [r].[Name]
+          FROM [UserRoles] AS [u0]
+          INNER JOIN [Roles] AS [r] ON [u0].[RoleId] = [r].[Id]
+          WHERE [u].[Id] = [u0].[UserId]
+          ORDER BY [u0].[RoleId]), N'') AS [Role], [u].[IsActive], [u].[IsEmailVerified], (
+          SELECT COUNT(*)
+          FROM [BlogPosts] AS [b]
+          WHERE [u].[Id] = [b].[AuthorId]) AS [PostCount]
+      FROM [Users] AS [u]
+      WHERE [u].[FirstName] + N' ' + [u].[LastName] LIKE @term_contains ESCAPE N'\' OR [u].[Email] LIKE @term_contains0 ESCAPE N'\'
+      ORDER BY [u].[FirstName], [u].[LastName]
+      OFFSET @p ROWS FETCH NEXT @p3 ROWS ONLY
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@Trim='?' (Size = 100)], CommandType='Text', CommandTimeout='30']
+      SELECT [u1].[Id], [u1].[Email], [u1].[FirstName], [u1].[IsActive], [u1].[IsEmailVerified], [u1].[LastName], [u1].[PasswordHash], [u1].[PasswordSalt], [s].[Id], [s].[RoleId], [s].[UserId], [s].[Id0], [s].[Name]
+      FROM (
+          SELECT TOP(1) [u].[Id], [u].[Email], [u].[FirstName], [u].[IsActive], [u].[IsEmailVerified], [u].[LastName], [u].[PasswordHash], [u].[PasswordSalt]
+          FROM [Users] AS [u]
+          WHERE [u].[Email] = @Trim
+      ) AS [u1]
+      LEFT JOIN (
+          SELECT [u0].[Id], [u0].[RoleId], [u0].[UserId], [r].[Id] AS [Id0], [r].[Name]
+          FROM [UserRoles] AS [u0]
+          INNER JOIN [Roles] AS [r] ON [u0].[RoleId] = [r].[Id]
+      ) AS [s] ON [u1].[Id] = [s].[UserId]
+      ORDER BY [u1].[Id], [s].[Id]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [BlogPosts] AS [b]
+      WHERE [b].[Status] = 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [BlogPosts] AS [b]
+      WHERE [b].[Status] = 3
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [BlogPosts] AS [b]
+      WHERE [b].[Status] = 2
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [Users] AS [u]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [UserRoles] AS [u]
+      WHERE [u].[RoleId] = 2
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@weekAgo='?' (DbType = DateTime2)], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [Comments] AS [c]
+      WHERE [c].[CreatedAt] >= @weekAgo
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT [b0].[Id], [b0].[Title], [b0].[Slug], [u].[FirstName] + N' ' + [u].[LastName] AS [AuthorName], [c].[Name] AS [CategoryName], [b0].[Status], (
+          SELECT COUNT(*)
+          FROM [Comments] AS [c0]
+          WHERE [b0].[Id] = [c0].[PostId]) AS [CommentCount], [b0].[CreatedAt], [b0].[PublishedAt]
+      FROM (
+          SELECT TOP(@p) [b].[Id], [b].[AuthorId], [b].[CategoryId], [b].[CreatedAt], [b].[PublishedAt], [b].[Slug], [b].[Status], [b].[Title]
+          FROM [BlogPosts] AS [b]
+          ORDER BY [b].[CreatedAt] DESC
+      ) AS [b0]
+      INNER JOIN [Users] AS [u] ON [b0].[AuthorId] = [u].[Id]
+      INNER JOIN [Categories] AS [c] ON [b0].[CategoryId] = [c].[Id]
+      ORDER BY [b0].[CreatedAt] DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT [c0].[Id], [c0].[PostId], [b].[Title] AS [PostTitle], [b].[Slug] AS [PostSlug], [u].[FirstName] + N' ' + [u].[LastName] AS [UserName], [c0].[Content], [c0].[CreatedAt]
+      FROM (
+          SELECT TOP(@p) [c].[Id], [c].[Content], [c].[CreatedAt], [c].[PostId], [c].[UserId]
+          FROM [Comments] AS [c]
+          ORDER BY [c].[CreatedAt] DESC
+      ) AS [c0]
+      INNER JOIN [BlogPosts] AS [b] ON [c0].[PostId] = [b].[Id]
+      INNER JOIN [Users] AS [u] ON [c0].[UserId] = [u].[Id]
+      ORDER BY [c0].[CreatedAt] DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [c].[Id], [c].[Name], (
+          SELECT COUNT(*)
+          FROM [BlogPosts] AS [b]
+          WHERE [c].[Id] = [b].[CategoryId] AND [b].[Status] = 1) AS [PostCount]
+      FROM [Categories] AS [c]
+      ORDER BY [c].[Name]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [BlogPosts] AS [b]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT [b0].[Id], [b0].[Title], [b0].[Slug], [u].[FirstName] + N' ' + [u].[LastName] AS [AuthorName], [c].[Name] AS [CategoryName], [b0].[Status], (
+          SELECT COUNT(*)
+          FROM [Comments] AS [c0]
+          WHERE [b0].[Id] = [c0].[PostId]) AS [CommentCount], [b0].[CreatedAt], [b0].[PublishedAt]
+      FROM (
+          SELECT [b].[Id], [b].[AuthorId], [b].[CategoryId], [b].[CreatedAt], [b].[PublishedAt], [b].[Slug], [b].[Status], [b].[Title]
+          FROM [BlogPosts] AS [b]
+          ORDER BY [b].[CreatedAt] DESC, [b].[Id] DESC
+          OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+      ) AS [b0]
+      INNER JOIN [Users] AS [u] ON [b0].[AuthorId] = [u].[Id]
+      INNER JOIN [Categories] AS [c] ON [b0].[CategoryId] = [c].[Id]
+      ORDER BY [b0].[CreatedAt] DESC, [b0].[Id] DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [Users] AS [u]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT [u].[Id], [u].[FirstName] + N' ' + [u].[LastName] AS [FullName], [u].[Email], COALESCE((
+          SELECT TOP(1) [r].[Name]
+          FROM [UserRoles] AS [u0]
+          INNER JOIN [Roles] AS [r] ON [u0].[RoleId] = [r].[Id]
+          WHERE [u].[Id] = [u0].[UserId]
+          ORDER BY [u0].[RoleId]), N'') AS [Role], [u].[IsActive], [u].[IsEmailVerified], (
+          SELECT COUNT(*)
+          FROM [BlogPosts] AS [b]
+          WHERE [u].[Id] = [b].[AuthorId]) AS [PostCount]
+      FROM [Users] AS [u]
+      ORDER BY [u].[FirstName], [u].[LastName]
+      OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*)
+      FROM [Comments] AS [c]
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT [c0].[Id], [c0].[PostId], [b].[Title] AS [PostTitle], [b].[Slug] AS [PostSlug], [u].[FirstName] + N' ' + [u].[LastName] AS [UserName], [c0].[Content], [c0].[CreatedAt]
+      FROM (
+          SELECT [c].[Id], [c].[Content], [c].[CreatedAt], [c].[PostId], [c].[UserId]
+          FROM [Comments] AS [c]
+          ORDER BY [c].[CreatedAt] DESC
+          OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+      ) AS [c0]
+      INNER JOIN [BlogPosts] AS [b] ON [c0].[PostId] = [b].[Id]
+      INNER JOIN [Users] AS [u] ON [c0].[UserId] = [u].[Id]
+      ORDER BY [c0].[CreatedAt] DESC
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [c].[Id], [c].[Name], (
+          SELECT COUNT(*)
+          FROM [BlogPosts] AS [b]
+          WHERE [c].[Id] = [b].[CategoryId] AND [b].[Status] = 1) AS [PostCount]
+      FROM [Categories] AS [c]
+      ORDER BY [c].[Name]
