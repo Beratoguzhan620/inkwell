@@ -1,0 +1,24 @@
+# The public demo on Render's free plan: one web service from deploy/demo/Dockerfile (the site, and the admin panel at
+# /admin), with SQLite in a file inside the container. Every restart (the free plan sleeps after 15 idle minutes)
+# starts again from the demo content, whose accounts are listed in the README. E-mail is not configured, so new
+# sign-ups cannot verify their address; the demo accounts are already verified.
+services:
+  - type: web
+    name: inkwell-demo
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./deploy/demo/Dockerfile
+    dockerContext: .
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: Seed__DemoContent
+        value: "true"
+      - key: AppUrl
+        value: https://inkwell-demo.onrender.com
+      - key: TZ
+        value: Europe/Istanbul
+      - key: ASPNETCORE_FORWARDEDHEADERS_ENABLED
+        value: "true"
+      - key: PORT
+        value: "8080"

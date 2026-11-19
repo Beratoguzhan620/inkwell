@@ -8,9 +8,16 @@ public static class DataServiceRegistrations
 {
     public static IServiceCollection AddDataServices(this IServiceCollection services, IConfiguration configuration)
     {
+        // SQL Server by default; "Sqlite" (Database:Provider) runs the public demo, with the database in a file that
+        // starts again from the demo content on every restart.
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        var useSqlite = string.Equals(configuration["Database:Provider"], "Sqlite", StringComparison.OrdinalIgnoreCase);
         services.AddDbContext<AppDbContext>(options =>
         {
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            if (useSqlite)
+                options.UseSqlite(connectionString);
+            else
+                options.UseSqlServer(connectionString);
         });
 
         return services;
