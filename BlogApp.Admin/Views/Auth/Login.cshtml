@@ -1,4 +1,5 @@
 @model LoginViewModel
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @{
     Layout = null;
     ViewData["Title"] = "Giriş";
@@ -31,6 +32,10 @@
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Giriş yap</button>
                 </form>
+                @if (Configuration["Demo:LoginHint"] is { Length: > 0 } demoHint)
+                {
+                    <p class="text-muted small mt-3 mb-0">@demoHint</p>
+                }
             </div>
         </div>
     </main>

@@ -15,7 +15,7 @@ services:
       - key: Seed__DemoContent
         value: "true"
       - key: AppUrl
-        value: https://inkwell-demo.onrender.com
+        value: https://inkwell-demo-9upx.onrender.com
       - key: TZ
         value: Europe/Istanbul
       - key: ASPNETCORE_FORWARDEDHEADERS_ENABLED
