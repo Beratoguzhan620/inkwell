@@ -7,12 +7,14 @@ export DOTNET_gcServer=0 DOTNET_GCConserveMemory=7
 export Database__Provider=Sqlite ConnectionStrings__DefaultConnection="Data Source=/tmp/inkwell.db"
 
 cd /app/web
-ASPNETCORE_HTTP_PORTS=8081 dotnet BlogApp.MVC.dll &
+ASPNETCORE_HTTP_PORTS=8081 Demo__LoginHint="Demo: yazar elif@example.com, okur okur@example.com · şifre Demo123! (yönetim paneli: /admin)" \
+  dotnet BlogApp.MVC.dll &
 web=$!
 until bash -c 'exec 3<>/dev/tcp/127.0.0.1/8081' 2>/dev/null; do sleep 1; done
 
 cd /app/admin
-ASPNETCORE_HTTP_PORTS=8082 PathBase=/admin dotnet BlogApp.Admin.dll &
+ASPNETCORE_HTTP_PORTS=8082 PathBase=/admin Demo__LoginHint="Demo: admin@example.com · şifre Demo123!" \
+  dotnet BlogApp.Admin.dll &
 admin=$!
 
 nginx -e stderr -c /app/nginx.conf -g 'daemon off;' &

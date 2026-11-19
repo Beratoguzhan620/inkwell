@@ -1,4 +1,5 @@
 @model LoginRequest
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @{
     ViewData["Title"] = "Giriş yap";
 }
@@ -33,6 +34,10 @@
         </form>
 
         <p class="auth-switch">Hesabınız yok mu? <a asp-controller="Auth" asp-action="Register">Kayıt olun</a></p>
+        @if (Configuration["Demo:LoginHint"] is { Length: > 0 } demoHint)
+        {
+            <p class="text-muted small mt-3 mb-0">@demoHint</p>
+        }
     </div>
 </div>
 
